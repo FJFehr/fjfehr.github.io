@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bruno Andreis</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="timeline.css">
+    <link rel="stylesheet" href="media.css">
+</head>
+<body>
+    <div id="top"></div>
+    <main>
+    
+
+    <div class="header">
+        <a href="#top" class="name-link"><div class="name" id="site-name">Loading…</div></a>
+        <div class="nav-links" id="nav-links">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+        </div>
+    </div>
+
+      <section class="profile-section">
+        <div class="profile-container">
+            <div class="profile-sidebar">
+                <div class="profile-image">
+                    <img src="images/profile_picture.jpg" alt="Profile Picture">
+                    <div class="nationality-flags">🇿🇦 🇨🇭</div>
+                </div>
+                <div class="profile-role">
+                    <h3 class="role-title" id="role-title">Loading…</h3>
+                    <p class="role-affiliation" id="role-affiliation">Loading…</p>
+                </div>
+                <div class="profile-socials" id="profile-socials"></div>
+            </div>
+            <div class="profile-text" id="profile-content">
+	      <p>Loading...</p>
+            </div>
+        </div>
+	</section>
+    
+    <section id="timeline" class="timeline-section">
+        <div id="timeline-list" class="timeline-container"></div>
+    </section>
+
+    <header>
+        <h1 id="media-heading">Loading…</h1>
+    </header>
+
+    <section id="media" class="media-section">
+        <div id="media-list" class="media-grid"></div>
+    </section>
+
+    <header>
+        <h1 id="publications-heading">Loading…</h1>
+        <p class="publications-note">Please see my <a href="https://scholar.google.com/citations?user=WaZWY0wAAAAJ&hl=en" target="_blank">Google Scholar</a> for a complete list of publications.</p>
+    </header>
+
+        <section id="pubs" class="publications">
+	  <div id="publications-list"></div>
+        </section>
+
+        <header>
+        <h1 id="blog-heading">Loading…</h1>
+        <p style="text-align: center; color: var(--muted-color); font-size: 16px; margin-top: 8px; max-width: 600px; margin-left: auto; margin-right: auto;">Welcome to my blog, where I write about the things.</p>
+    </header>
+
+        <section id="blog" class="blog-section">
+          <div id="blog-list"></div>
+        </section>
+    
+
+    <footer>
+        <p>&copy; <span id="footer-year">2025</span> <span id="footer-name">Loading…</span>. All rights reserved.</p>
+        <p id="footer-tagline" style="margin-top: 8px; font-style: italic;">Loading…</p>
+    </footer>
+
+    <script>
+        // Load site metadata (name, role, affiliation) from site.json
+        async function loadSiteMeta() {
+            try {
+                const resp = await fetch('content/profile/site.json');
+                const site = await resp.json();
+                const siteNameEl = document.getElementById('site-name');
+                const roleTitleEl = document.getElementById('role-title');
+                const roleAffEl = document.getElementById('role-affiliation');
+                const footerNameEl = document.getElementById('footer-name');
+
+                if (siteNameEl && site.siteName) {
+                    siteNameEl.textContent = site.siteName;
+                    document.title = site.siteName;
+                }
+                if (roleTitleEl && site.role && site.role.title) roleTitleEl.textContent = site.role.title;
+                if (roleAffEl && site.role && site.role.affiliation) roleAffEl.textContent = site.role.affiliation;
+                if (footerNameEl && site.footerName) footerNameEl.textContent = site.footerName;
+            } catch (error) {
+                console.error('Error loading site metadata:', error);
+            }
+        }
+
+        // Load layout config for footer year only
+        async function loadLayoutConfig() {
+            try {
+                const resp = await fetch('config/layout.json');
+                const layout = await resp.json();
+                
+                // Build navigation
+                const navLinksEl = document.getElementById('nav-links');
+                if (navLinksEl && layout.header.navigation) {
+                    // Clear existing (except theme toggle)
+                    const themeBtn = navLinksEl.querySelector('#theme-toggle');
+                    navLinksEl.innerHTML = '';
+                    
+                    // Add nav links
+                    layout.header.navigation.forEach(nav => {
+                        const link = document.createElement('a');
+                        link.href = nav.href;
+                        link.innerHTML = nav.label; // Use innerHTML to support HTML tags like <b>
+                        navLinksEl.appendChild(link);
+                    });
+                    
+                    // Re-add theme toggle
+                    if (themeBtn) navLinksEl.appendChild(themeBtn);
+                }
+                
+                // Set section titles
+                const pubsHeadingEl = document.getElementById('publications-heading');
+                const blogHeadingEl = document.getElementById('blog-heading');
+                const mediaHeadingEl = document.getElementById('media-heading');
+                if (pubsHeadingEl && layout.sections.publications.title) {
+                    pubsHeadingEl.innerHTML = layout.sections.publications.title;
+                }
+                if (blogHeadingEl && layout.sections.blog.title) {
+                    blogHeadingEl.innerHTML = layout.sections.blog.title;
+                }
+                if (mediaHeadingEl && layout.sections.media && layout.sections.media.title) {
+                    mediaHeadingEl.innerHTML = layout.sections.media.title;
+                }
+                
+                // Set footer tagline
+                const footerTaglineEl = document.getElementById('footer-tagline');
+                if (footerTaglineEl && layout.footer.tagline) {
+                    footerTaglineEl.textContent = layout.footer.tagline;
+                }
+                
+                // Set footer year
+                const footerYearEl = document.getElementById('footer-year');
+                if (footerYearEl && layout.footer.year) {
+                    footerYearEl.textContent = layout.footer.year;
+                }
+            } catch (error) {
+                console.error('Error loading layout config:', error);
+            }
+        }
+
+        // Load profile content from site metadata or fallback to markdown
+        async function loadProfileContent() {
+            try {
+                const resp = await fetch('content/profile/site.json');
+                const site = await resp.json();
+                
+                if (site.profile) {
+                    // Use profile from site.json
+                    const markdown = site.profile;
+                    let html = markdown
+                        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+                        .replace(/\n\n+/g, '</p><p>')
+                        .replace(/^/, '<p>')
+                        .replace(/$/, '</p>');
+                    document.getElementById('profile-content').innerHTML = html;
+                } else {
+                    // Fallback to bio.md if profile not in site.json
+                    const response = await fetch('content/profile/bio.md');
+                    const markdown = await response.text();
+                    let html = markdown
+                        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+                        .replace(/\n\n+/g, '</p><p>')
+                        .replace(/^/, '<p>')
+                        .replace(/$/, '</p>');
+                    document.getElementById('profile-content').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading profile content:', error);
+            }
+        }
+
+        // Load social links from JSON
+        async function loadSocialLinks() {
+            try {
+                const response = await fetch('content/profile/contacts.json');
+                const contacts = await response.json();
+                const socialsContainer = document.getElementById('profile-socials');
+                
+                contacts.forEach(contact => {
+                    const socialLink = document.createElement('a');
+                    socialLink.href = contact.url;
+                    socialLink.target = '_blank';
+                    socialLink.className = 'social-link';
+                    socialLink.title = contact.name;
+                    
+                    if (contact.isImage) {
+                        // Use image icon
+                        socialLink.innerHTML = `<img src="${contact.icon}" alt="${contact.name}" class="social-icon-img">`;
+                    } else {
+                        // Use emoji icon
+                        socialLink.innerHTML = `<span class="social-icon">${contact.icon}</span>`;
+                    }
+                    
+                    socialsContainer.appendChild(socialLink);
+                });
+            } catch (error) {
+                console.error('Error loading social links:', error);
+            }
+        }
+
+        // Load publications from JSON
+        async function loadPublications() {
+            try {
+                const response = await fetch('content/publications/publications.json');
+                const publications = await response.json();
+                const listContainer = document.getElementById('publications-list');
+                
+                publications.forEach(pub => {
+                    // Build buttons HTML for available resources
+                    let buttonsHTML = '';
+                    const buttons = [
+                        { key: 'paper', label: 'Paper', url: pub.paper || pub.link },
+                        { key: 'code', label: 'Code', url: pub.code },
+                        { key: 'poster', label: 'Poster', url: pub.poster },
+                        { key: 'slides', label: 'Slides', url: pub.slides },
+                        { key: 'video', label: 'Video', url: pub.video },
+                        { key: 'demo', label: 'Demo', url: pub.demo }
+                    ];
+                    
+                    const availableButtons = buttons.filter(btn => btn.url);
+                    if (availableButtons.length > 0) {
+                        buttonsHTML = '<div class="pub-buttons">' + 
+                            availableButtons.map(btn => 
+                                `<a href="${btn.url}" class="pub-button" target="_blank" onclick="event.stopPropagation()">${btn.label}</a>`
+                            ).join('') + 
+                        '</div>';
+                    }
+                    
+                    // Bold author name and format conference
+                    let formattedAuthors = pub.authors.replace(/\bF\. Fehr\b/g, '<strong>F. Fehr</strong>');
+                    
+                    const pubHTML = `
+                    <div class="publication" onclick="window.open('${pub.paper || pub.link}', '_blank')">
+                        <div class="pub-image">
+                            <img src="${pub.image}" alt="${pub.title}">
+                        </div>
+                        <div class="pub-description">
+                            <h2>${pub.title}</h2>
+                            <p>${formattedAuthors}</p>
+                            <p>${pub.venue}</p>
+                            <p><b class='pub-conference'>${pub.conference}</b></p>
+                            ${buttonsHTML}
+                        </div>
+                    </div>
+                    `;
+                    listContainer.innerHTML += pubHTML;
+                });
+            } catch (error) {
+                console.error('Error loading publications:', error);
+            }
+        }
+
+        // Load blogs from JSON
+        async function loadBlogs() {
+            try {
+                const response = await fetch('content/blogs/blogs.json');
+                const blogs = await response.json();
+                const listContainer = document.getElementById('blog-list');
+                
+                blogs.forEach(blog => {
+                    const blogHTML = `
+                    <a href="blogs.html?id=${blog.id}" style="text-decoration:none;">
+                    <div class="blog-post">
+                        <div class="blog-image">
+                            <img src="${blog.thumbnail}" alt="${blog.title}">
+                        </div>
+                        <div class="blog-description">
+                            <h2>${blog.title}</h2>
+                            <p class="blog-date">${new Date(blog.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                            <p>${blog.excerpt}</p>
+                        </div>
+                    </div>
+                    </a>
+                    `;
+                    listContainer.innerHTML += blogHTML;
+                });
+            } catch (error) {
+                console.error('Error loading blogs:', error);
+            }
+        }
+
+        // Load design config and apply CSS variables (e.g. publication thumbnail size)
+        // Load design config and apply CSS variables
+        async function loadDesignConfig() {
+            try {
+                const resp = await fetch('config/design.json');
+                if (!resp.ok) return;
+                const cfg = await resp.json();
+                
+                // Layout variables
+                if (cfg.layout) {
+                    if (cfg.layout.maxWidth) {
+                        const val = cfg.layout.maxWidth.value;
+                        const unit = cfg.layout.maxWidth.unit || 'px';
+                        document.documentElement.style.setProperty('--maxw', val + unit);
+                    }
+                }
+                
+                // Typography variables
+                if (cfg.typography) {
+                    if (cfg.typography.body) {
+                        if (cfg.typography.body.lineHeight) {
+                            document.documentElement.style.setProperty('--body-line-height', cfg.typography.body.lineHeight.value);
+                        }
+                    }
+                }
+                
+                // Image variables
+                const pub = cfg.images && cfg.images.publicationThumbnail;
+                if (pub) {
+                    // Use a fixed-width x fixed-height box so text aligns; image preserves aspect ratio inside
+                    const w = pub.width && pub.width.value ? pub.width.value : null;
+                    const wUnit = pub.width && pub.width.unit ? pub.width.unit : 'px';
+                    const h = pub.height && pub.height.value ? pub.height.value : null;
+                    const hUnit = pub.height && pub.height.unit ? pub.height.unit : 'px';
+                    const br = pub.borderRadius || '4px';
+                    if (w) document.documentElement.style.setProperty('--pub-thumb-width', w + wUnit);
+                    if (h) document.documentElement.style.setProperty('--pub-thumb-height', h + hUnit);
+                    document.documentElement.style.setProperty('--pub-thumb-radius', br);
+                }
+            } catch (error) {
+                console.error('Error loading design config:', error);
+            }
+        }
+
+        // Dark mode toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        
+        // Check for saved theme preference or system preference
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Apply saved theme
+        if (savedTheme === 'dark') {
+            htmlElement.setAttribute('data-theme', 'dark');
+            themeToggle.textContent = '☀️';
+        } else {
+            htmlElement.setAttribute('data-theme', 'light');
+            themeToggle.textContent = '🌙';
+        }
+        
+        // Toggle theme on button click
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Load content on page load (load layout and design first so CSS vars and content apply)
+        loadLayoutConfig();
+        loadSiteMeta();
+        loadDesignConfig();
+        loadProfileContent();
+        loadSocialLinks();
+        loadPublications();
+        loadBlogs();
+    </script>
+    <script src="timeline.js"></script>
+    <script src="media.js"></script>
+</body>
+</html>

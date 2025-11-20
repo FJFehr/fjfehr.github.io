@@ -1,0 +1,30 @@
+[
+      {
+    "id": 1,
+    "title": "2025 SYNTH*IA* - The first AI band member that JAMS with you!",
+    "videoId": "Vhwi-pR9_wg",
+    "timestamp": 0,
+    "description": "Winners of Idiap Create Challenge 2025. The first AI band member that JAMS with you. Powered by a custom generative *AI* MIDI model, it is fast, creative, and easy to use!"
+  },
+    {
+    "id": 2,
+    "title": "2025 PhD Defence",
+    "videoId": "wEDG70-SO0A?si=wis7LEKMOaTxsvg8",
+    "timestamp": 0,
+    "description": "Presentation of my thesis: Nonparametric Variational Information Bottleneck: Attention-based Architectures as Latent Variable Models"
+  },
+    {
+    "id": 3,
+    "title": "2025 Interview at ACL",
+    "videoId": "GBISWggsQOA",
+    "timestamp": 33,
+    "description": "ACL Interview - AI Coffee Break with Letitia. CoRet: Improved Retriever for Code Editing."
+  },
+  {
+    "id": 4,
+    "title": "2021 Most Uncertainly",
+    "videoId": "Gm_JDGQxTdQ",
+    "timestamp": 684,
+    "description": "SciFilmIt Hackathon Geneva 2021 - participated and acted in a story revolving around the value of statistics."
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "CoRet: Improved Retriever for Code Editing",
+    "authors": "F. Fehr, P. T. Sivaprasad, L. Franceschi, G. Zappella",
+    "venue": "Annual Meeting of the Association for Computational Linguistics",
+    "conference": "ACL 2025",
+    "paper": "https://aclanthology.org/2025.acl-short.62/",
+    "poster": "images/publications/ACL2025_main-3466_poster.pdf",
+    "slides": "images/publications/ACL2025_main3466_slides.pdf",
+    "video": "https://youtu.be/hopcdZLD2ek?si=OIFZYa2gZ9QGENOi",
+    "image": "images/publications/Coret.png"
+  },
+  {
+    "id": 2,
+    "title": "Nonparametric Variational Regularisation of Pretrained Transformers",
+    "authors": "F. Fehr, J. Henderson",
+    "venue": "Conference on Language Modeling",
+    "conference": "COLM 2024",
+    "paper": "https://openreview.net/forum?id=Zu8OWNUC0u#discussion",
+    "poster": "images/publications/NV_regularisation_poster.pdf",
+    "code": "https://github.com/idiap/nvr_transformers",
+    "image": "images/publications/nvr.png"
+  },
+  {
+    "id": 3,
+    "title": "Learning to Abstract with Nonparametric Variational Information Bottleneck",
+    "authors": "M. Behjati, F. Fehr, J. Henderson",
+    "venue": "Conference on Empirical Methods in Natural Language Processing",
+    "conference": "Findings of EMNLP 2023",
+    "paper": "https://openreview.net/pdf?id=vU0KbvQ91x",
+    "poster": "images/publications/NVIB_SA_poster.pdf",
+    "code": "https://github.com/idiap/nvib_selfattention",
+    "video": "https://aclanthology.org/2023.findings-emnlp.106.mp4",
+    "demo": "https://huggingface.co/spaces/FJFehr/NVIB-Self-Attention-Demo",
+    "image": "images/publications/NVIBSaTransformer.png"
+  },
+  {
+    "id": 4,
+    "title": "HyperMixer: An MLP-based Low Cost Alternative to Transformers",
+    "authors": "F. Mai, A. Pannatier, F. Fehr, H. Chen, F. Marelli, F. Fleuret, J. Henderson",
+    "venue": "Annual Meeting of the Association for Computational Linguistics",
+    "conference": "ACL 2023",
+    "paper": "https://aclanthology.org/2023.acl-long.871/",
+    "poster": "images/publications/Hypermixer_Poster.pdf",
+    "code": "https://github.com/idiap/hypermixing",
+    "video": "https://aclanthology.org/2023.acl-long.871.mp4",
+    "image": "images/publications/HypermixerV5.drawio.png"
+  },
+  {
+    "id": 5,
+    "title": "A Variational AutoEncoder for Transformers with Nonparametric Variational Information Bottleneck",
+    "authors": "J. Henderson, F. Fehr",
+    "venue": "International Conference on Learning Representations",
+    "conference": "ICLR 2023",
+    "paper": "https://openreview.net/forum?id=6QkjC_cs03X",
+    "poster": "images/publications/NVIB_Poster.pdf",
+    "code": "https://github.com/idiap/nvib",
+    "video": "https://iclr.cc/virtual/2023/poster/10953",
+    "image": "images/publications/denoising_1_crop.png"
+  }
+]

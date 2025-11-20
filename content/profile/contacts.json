@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Email",
+    "icon": "✉️",
+    "url": "mailto:fabiofehr96@gmail.com",
+    "display": "fabiofehr96@gmail.com"
+  },
+  {
+    "name": "Google Scholar",
+    "icon": "images/icons/google-scholar-svgrepo-com.svg",
+    "url": "https://scholar.google.com/citations?user=WaZWY0wAAAAJ&hl=en",
+    "display": "Google Scholar",
+    "isImage": true
+  },
+  {
+    "name": "LinkedIn",
+    "icon": "images/icons/linkedin-svgrepo-com.svg",
+    "url": "https://www.linkedin.com/in/fabio-j-fehr/",
+    "display": "LinkedIn",
+    "isImage": true
+  },
+  {
+    "name": "GitHub",
+    "icon": "images/icons/github-svgrepo-com.svg",
+    "url": "https://github.com/FJFehr",
+    "display": "GitHub",
+    "isImage": true
+  },
+  {
+    "name": "Twitter",
+    "icon": "𝕏",
+    "url": "https://twitter.com/FabioFehr",
+    "display": "Twitter"
+  },
+  {
+    "name": "YouTube",
+    "icon": "images/icons/youtube-svgrepo-com.svg",
+    "url": "https://www.youtube.com/@FabioJFehr",
+    "display": "YouTube",
+    "isImage": true
+  },
+  {
+    "name": "Instagram",
+    "icon": "images/icons/instagram-2016-logo-svgrepo-com.svg",
+    "url": "https://www.instagram.com/fabio_j_fehr/",
+    "display": "Instagram",
+    "isImage": true
+  },
+  {
+    "name": "Spotify",
+    "icon": "images/icons/spotify-color-svgrepo-com.svg",
+    "url": "https://open.spotify.com/user/rsb5wsunuryza4ziszf8viphz?si=6d07fad53a7948e9",
+    "display": "Spotify",
+    "isImage": true
+  }
+]

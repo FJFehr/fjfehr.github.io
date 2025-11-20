@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Blog Post</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .blog-container {
+            max-width: var(--maxw);
+            margin: var(--blog-margin-top, 40px) auto var(--blog-margin-bottom, 40px);
+            padding: 0 var(--padding-horizontal, 40px);
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        
+        .blog-toc {
+            flex-shrink: 0;
+            width: 200px;
+            position: sticky;
+            top: 80px;
+        }
+        
+        .blog-toc h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--muted-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .blog-toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .blog-toc li {
+            margin-bottom: 8px;
+        }
+        
+        .blog-toc a {
+            color: var(--muted-color);
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.4;
+            display: block;
+            transition: color 0.2s ease;
+        }
+        
+        .blog-toc a:hover {
+            color: var(--link-color);
+        }
+        
+        .blog-toc a.active {
+            color: var(--link-color);
+            font-weight: 600;
+        }
+        
+        .blog-content {
+            flex: 1;
+            min-width: 0;
+            color: var(--text-color);
+        }
+        
+        @media (max-width: 900px) {
+            .blog-container {
+                flex-direction: column;
+            }
+            .blog-toc {
+                width: 100%;
+                position: static;
+            }
+        }
+        
+        .blog-content .back-link {
+            max-width: var(--maxw);
+            margin: var(--blog-margin-top, 40px) auto var(--blog-margin-bottom, 40px);
+            padding: 0 var(--padding-horizontal, 40px);
+            color: var(--text-color);
+        }
+        .blog-content .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--link-color);
+            text-decoration: none;
+            font-size: var(--link-font-size, 14px);
+        }
+        .blog-content .back-link:hover {
+            text-decoration: underline;
+        }
+        .blog-content h1 { 
+            font-size: var(--name-font-size, 32px); 
+            margin-bottom: 8px; 
+            font-weight: 700; 
+        }
+        .blog-content .blog-meta { 
+            font-size: var(--link-font-size, 14px); 
+            margin-bottom: 32px; 
+            color: var(--muted-color); 
+        }
+        .blog-content h2 { 
+            font-size: var(--section-title-font-size, 22px); 
+            margin: 40px 0 16px; 
+            font-weight: 700;
+            scroll-margin-top: 80px;
+        }
+        .blog-content h3 { 
+            font-size: 18px; 
+            margin: 32px 0 12px; 
+            font-weight: 600;
+            scroll-margin-top: 80px;
+        }
+        .blog-content p { 
+            font-size: var(--body-font-size, 17px); 
+            line-height: var(--body-line-height, 1.7); 
+            margin-bottom: 24px; 
+        }
+        .blog-content ul, .blog-content ol {
+            font-size: var(--body-font-size, 17px);
+            line-height: var(--body-line-height, 1.7);
+            margin-bottom: 24px;
+            padding-left: 24px;
+        }
+        .blog-content li {
+            margin-bottom: 8px;
+        }
+        .blog-content a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        .blog-content a:hover {
+            text-decoration: underline;
+        }
+        .blog-content strong, .blog-content b {
+            font-weight: 600;
+        }
+        .blog-content figure {
+            margin: 32px 0;
+        }
+        .blog-content figure img { 
+            width: 100%; 
+            border-radius: var(--pub-thumb-radius, 6px); 
+        }
+        .blog-content figcaption { 
+            text-align: center; 
+            font-size: 14px; 
+            color: var(--muted-color); 
+            margin-top: 8px; 
+        }
+    </style>
+</head>
+<body>
+    <div id="top"></div>
+    <main>
+        <div class="header">
+            <a href="index.html#top" class="name-link"><div class="name" id="site-name">Loading…</div></a>
+            <div class="nav-links" id="nav-links">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+            </div>
+        </div>
+
+        <div class="blog-container">
+            <nav class="blog-toc" id="blog-toc">
+                <h4>Contents</h4>
+                <ul id="toc-list"></ul>
+            </nav>
+            
+            <article class="blog-content">
+                <a href="index.html#blog" class="back-link">← Back to Fablogio</a>
+                <h1 id="blog-title">Loading…</h1>
+                <div id="blog-date" class="blog-meta"></div>
+                <div id="blog-body">Loading content…</div>
+                <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border-color, #e8e8e8); text-align: center;">
+                    <p style="font-style: italic; color: var(--muted-color); margin-bottom: 16px;">Thanks for reading!</p>
+                    <a href="index.html#blog" class="back-link" style="font-size: 16px;">← Let's escape the rabbit hole 🐰🕳️</a>
+                </div>
+            </article>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; <span id="footer-year">2025</span> <span id="footer-name">Loading…</span>. All rights reserved.</p>
+        <p id="footer-tagline" style="margin-top: 8px; font-style: italic;">Loading…</p>
+    </footer>
+
+    <script>
+        // Load site metadata
+        async function loadSiteMeta() {
+            try {
+                const resp = await fetch('content/profile/site.json');
+                const site = await resp.json();
+                const siteNameEl = document.getElementById('site-name');
+                const footerNameEl = document.getElementById('footer-name');
+
+                if (siteNameEl && site.siteName) {
+                    siteNameEl.textContent = site.siteName;
+                }
+                if (footerNameEl && site.footerName) {
+                    footerNameEl.textContent = site.footerName;
+                }
+            } catch (error) {
+                console.error('Error loading site metadata:', error);
+            }
+        }
+
+        // Load layout config for navigation and footer
+        async function loadLayoutConfig() {
+            try {
+                const resp = await fetch('config/layout.json');
+                const layout = await resp.json();
+                
+                // Set footer year
+                const footerYearEl = document.getElementById('footer-year');
+                if (footerYearEl && layout.footer.year) {
+                    footerYearEl.textContent = layout.footer.year;
+                }
+                
+                // Set footer tagline
+                const footerTaglineEl = document.getElementById('footer-tagline');
+                if (footerTaglineEl && layout.footer.tagline) {
+                    footerTaglineEl.textContent = layout.footer.tagline;
+                }
+            } catch (error) {
+                console.error('Error loading layout config:', error);
+            }
+        }
+
+        // Parse markdown to HTML
+        function parseMarkdown(markdown) {
+            // Remove frontmatter (YAML between ---)
+            markdown = markdown.replace(/^---[\s\S]*?---\n/, '');
+            
+            let html = markdown;
+            
+            // Parse figures (HTML pass-through)
+            // Keep <figure> blocks as-is
+            
+            // Parse headings
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Parse links [text](url)
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+            
+            // Parse bold **text** or __text__
+            html = html.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+            
+            // Parse italic *text* or _text_ (careful not to break existing HTML)
+            html = html.replace(/\*([^\*]+)\*/g, '<em>$1</em>');
+            
+            // Parse paragraphs (double newline = new paragraph)
+            // Split by double newlines, but preserve HTML blocks
+            const blocks = html.split(/\n\n+/);
+            html = blocks.map(block => {
+                block = block.trim();
+                if (!block) return '';
+                // Don't wrap if it's already an HTML tag
+                if (block.startsWith('<h') || block.startsWith('<figure') || 
+                    block.startsWith('<ul') || block.startsWith('<ol') ||
+                    block.startsWith('</')) {
+                    return block;
+                }
+                return '<p>' + block + '</p>';
+            }).join('\n');
+            
+            return html;
+        }
+
+        // Load blog post
+        async function loadBlogPost() {
+            try {
+                // Get blog ID from URL query parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const blogId = urlParams.get('id');
+                
+                if (!blogId) {
+                    document.getElementById('blog-body').innerHTML = '<p>No blog post specified.</p>';
+                    return;
+                }
+                
+                // Load blogs.json to find the markdown file
+                const blogsResp = await fetch('content/blogs/blogs.json');
+                const blogs = await blogsResp.json();
+                
+                const blog = blogs.find(b => b.id === blogId);
+                
+                if (!blog) {
+                    document.getElementById('blog-body').innerHTML = '<p>Blog post not found.</p>';
+                    return;
+                }
+                
+                // Set title and date
+                const titleEl = document.getElementById('blog-title');
+                const dateEl = document.getElementById('blog-date');
+                const pageTitleEl = document.getElementById('page-title');
+                
+                if (titleEl) titleEl.textContent = blog.title;
+                if (pageTitleEl) pageTitleEl.textContent = blog.title;
+                if (dateEl) {
+                    dateEl.textContent = new Date(blog.date).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                }
+                
+                // Load and parse markdown file
+                const markdownResp = await fetch(blog.markdownFile);
+                const markdownText = await markdownResp.text();
+                
+                const htmlContent = parseMarkdown(markdownText);
+                document.getElementById('blog-body').innerHTML = htmlContent;
+                
+                // Generate table of contents
+                generateTOC();
+                
+            } catch (error) {
+                console.error('Error loading blog post:', error);
+                document.getElementById('blog-body').innerHTML = '<p>Error loading blog post.</p>';
+            }
+        }
+
+        // Generate table of contents from h2 and h3 headings
+        function generateTOC() {
+            const blogBody = document.getElementById('blog-body');
+            const tocList = document.getElementById('toc-list');
+            const headings = blogBody.querySelectorAll('h2, h3');
+            
+            if (headings.length === 0) {
+                document.getElementById('blog-toc').style.display = 'none';
+                return;
+            }
+            
+            headings.forEach((heading, index) => {
+                // Add ID to heading for anchor linking
+                const id = `section-${index}`;
+                heading.id = id;
+                
+                // Create TOC item
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${id}`;
+                a.textContent = heading.textContent;
+                
+                // Indent h3 items
+                if (heading.tagName === 'H3') {
+                    li.style.paddingLeft = '12px';
+                    a.style.fontSize = '13px';
+                }
+                
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    window.history.pushState(null, '', `#${id}`);
+                });
+                
+                li.appendChild(a);
+                tocList.appendChild(li);
+            });
+            
+            // Highlight active section on scroll
+            let activeLink = null;
+            window.addEventListener('scroll', () => {
+                let current = '';
+                headings.forEach(heading => {
+                    const rect = heading.getBoundingClientRect();
+                    if (rect.top <= 100) {
+                        current = heading.id;
+                    }
+                });
+                
+                if (current && current !== activeLink) {
+                    tocList.querySelectorAll('a').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${current}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                    activeLink = current;
+                }
+            });
+        }
+
+        // Dark mode toggle (same as index.html)
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        
+        const savedTheme = localStorage.getItem('theme') || 
+                          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            htmlElement.setAttribute('data-theme', 'dark');
+            themeToggle.textContent = '☀️';
+        } else {
+            htmlElement.setAttribute('data-theme', 'light');
+            themeToggle.textContent = '🌙';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Load all content on page load
+        loadLayoutConfig();
+        loadSiteMeta();
+        loadBlogPost();
+    </script>
+</body>
+</html>

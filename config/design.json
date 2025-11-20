@@ -1,0 +1,228 @@
+{
+  "layout": {
+    "maxWidth": {
+      "value": 1100,
+      "unit": "px",
+      "description": "Maximum width of the content container"
+    },
+    "padding": {
+      "horizontal": {
+        "value": 40,
+        "unit": "px",
+        "description": "Horizontal padding for all sections"
+      },
+      "vertical": {
+        "value": 40,
+        "unit": "px",
+        "description": "Vertical padding for all sections"
+      }
+    }
+  },
+  
+  "typography": {
+    "body": {
+      "fontSize": {
+        "value": 17,
+        "unit": "px",
+        "description": "Default body text size"
+      },
+      "lineHeight": {
+        "value": 1.7,
+        "description": "Line height for body text"
+      },
+      "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
+      "color": {
+        "light": "#0a0a0a",
+        "dark": "#e0e0e0"
+      }
+    },
+    "heading": {
+      "name": {
+        "fontSize": {
+          "value": 32,
+          "unit": "px",
+          "description": "Size of 'Bruno Andreis' name in header"
+        },
+        "fontWeight": 700,
+        "letterSpacing": "-0.02em"
+      },
+      "sectionTitle": {
+        "fontSize": {
+          "value": 22,
+          "unit": "px",
+          "description": "Size of section titles (Publications, Contacts)"
+        },
+        "fontWeight": 700
+      }
+    },
+    "links": {
+      "fontSize": {
+        "value": 14,
+        "unit": "px",
+        "description": "Navigation link text size"
+      },
+      "color": {
+        "light": "#666",
+        "dark": "#a0a0a0"
+      }
+    }
+  },
+
+  "spacing": {
+    "header": {
+      "marginTop": {
+        "value": 70,
+        "unit": "px"
+      },
+      "marginBottom": {
+        "value": 70,
+        "unit": "px"
+      }
+    },
+    "profileSection": {
+      "marginTop": {
+        "value": 40,
+        "unit": "px"
+      },
+      "marginBottom": {
+        "value": 40,
+        "unit": "px"
+      },
+      "gap": {
+        "value": 16,
+        "unit": "px",
+        "description": "Gap between profile image and text"
+      }
+    },
+    "publicationSection": {
+      "marginTop": {
+        "value": 40,
+        "unit": "px"
+      },
+      "marginBottom": {
+        "value": 40,
+        "unit": "px"
+      },
+      "publicationMarginBottom": {
+        "value": 12,
+        "unit": "px",
+        "description": "Gap between publication items"
+      }
+    },
+    "contactSection": {
+      "marginTop": {
+        "value": 40,
+        "unit": "px"
+      },
+      "marginBottom": {
+        "value": 40,
+        "unit": "px"
+      }
+    },
+    "footer": {
+      "marginTop": {
+        "value": 60,
+        "unit": "px"
+      },
+      "paddingBottom": {
+        "value": 40,
+        "unit": "px"
+      }
+    }
+  },
+
+  "images": {
+    "profilePicture": {
+      "width": {
+        "value": 180,
+        "unit": "px",
+        "description": "Width and height of profile picture (square)"
+      },
+      "borderRadius": "50%",
+      "description": "Profile picture is circular"
+    },
+    "publicationThumbnail": {
+      "width": {
+        "value": 180,
+        "unit": "px"
+      },
+      "height": {
+        "value": 180,
+        "unit": "px"
+      },
+      "borderRadius": "6px",
+      "description": "Fixed-size thumbnail box (width & height); image preserves aspect ratio inside the box"
+    }
+  },
+
+  "socialLinks": {
+    "button": {
+      "size": {
+        "value": 32,
+        "unit": "px",
+        "description": "Social icon button dimensions"
+      },
+      "borderRadius": "50%",
+      "description": "Circular buttons for social links"
+    },
+    "icon": {
+      "width": {
+        "value": 18,
+        "unit": "px"
+      },
+      "height": {
+        "value": 18,
+        "unit": "px"
+      },
+      "fontSize": {
+        "value": 20,
+        "unit": "px",
+        "description": "Size for emoji icons"
+      }
+    },
+    "gap": {
+      "value": 12,
+      "unit": "px",
+      "description": "Gap between social buttons"
+    },
+    "spacing": {
+      "marginTop": {
+        "value": 16,
+        "unit": "px",
+        "description": "Gap between profile picture and social links"
+      }
+    }
+  },
+
+  "colors": {
+    "light": {
+      "background": "#fff",
+      "text": "#0a0a0a",
+      "muted": "#666",
+      "border": "#e0e0e0",
+      "hover": "#ffe4cc",
+      "link": "#ff9966",
+      "description": "Peach highlight color for all hover effects in light mode, darker orange for links"
+    },
+    "dark": {
+      "background": "#1a1a1a",
+      "text": "#e0e0e0",
+      "muted": "#a0a0a0",
+      "border": "#333",
+      "hover": "#6a4c93",
+      "link": "#9370db",
+      "socialBackground": "#2a2a2a",
+      "description": "Light purple highlight color for all hover effects in dark mode, medium purple for links"
+    },
+    "accent": {
+      "conferenceLabel": "#8C001A",
+      "description": "Color for conference/workshop badges in publications"
+    }
+  },
+
+  "transitions": {
+    "duration": "0.2s",
+    "easing": "ease",
+    "description": "Smooth transitions for hover effects"
+  }
+}

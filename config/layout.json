@@ -1,0 +1,40 @@
+{
+  "header": {
+    "navigation": [
+      {
+        "label": "Experience",
+        "href": "#timeline"
+      },
+      {
+        "label": "Highlights",
+        "href": "#media-heading"
+      },
+      {
+        "label": "Publications",
+        "href": "#publications-heading"
+      },
+      {
+        "label": "Blog",
+        "href": "#blog-heading"
+      }
+    ]
+  },
+  "sections": {
+    "timeline": {
+      "title": "Timeline"
+    },
+    "media": {
+      "title": "Highlights"
+    },
+    "publications": {
+      "title": "Selected Publications"
+    },
+    "blog": {
+      "title": "Fablogio"
+    }
+  },
+  "footer": {
+    "year": 2025,
+    "tagline": "Powered entirely by vibe coding and groovy tunes ☕️🎶"
+  }
+}

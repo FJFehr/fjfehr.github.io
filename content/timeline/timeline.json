@@ -1,0 +1,62 @@
+[
+      {
+    "id": "oxford",
+    "type": "work",
+    "title": "Postdoctoral Researcher",
+    "organization": "University of Oxford",
+    "location": "Oxford, UK",
+    "url": "https://eng.ox.ac.uk/",
+    "startDate": "2026-01",
+    "endDate": "present",
+    "description": "**Incoming Postdoctoral Researcher** at the [University of Oxford](https://eng.ox.ac.uk/) in the [Torr Vision Group](https://torrvision.com/), working with [Prof. Philip Torr](https://scholar.google.com/citations?user=kPxa2w0AAAAJ&hl=en). I will be focusing on agentic frameworks for modelling legal reasoning.",
+    "logo": "images/timeline/oxford.svg"
+  },
+     {
+    "id": "amazon-intern",
+    "type": "work",
+    "title": "Applied Data Scientist Intern",
+    "organization": "Amazon",
+    "location": "Berlin, Germany",
+    "url": "https://www.amazon.science/",
+    "startDate": "2024-07",
+    "endDate": "2024-12",
+    "description": "**Applied Data Scientist Internship** at [Amazon](https://www.amazon.science/). Focused on enhancing retrieval in the Retrieval Augmented Generation (RAG) pipeline for code generation using Large Language Models (LLMs). Designed and trained a lightweight retrieval model that integrated code semantics with dense embeddings, file directory hierarchy, and call graph structure.\n\n*Publication:* [CoRet: Improved Retriever for Code Editing](https://aclanthology.org/2025.acl-long.1/) - ACL 2025.",
+    "logo": "images/timeline/Amazon.svg"
+  },
+    {
+    "id": "epfl-phd",
+    "type": "education",
+    "title": "PhD in Machine Learning",
+    "organization": "EPFL",
+    "location": "Lausanne, Switzerland",
+    "url": "https://www.epfl.ch/",
+    "startDate": "2021-01",
+    "endDate": "2025-09",
+    "description": "**PhD in Machine Learning** at [EPFL](https://www.epfl.ch/) and [Idiap Research Institute](https://www.idiap.ch/). Published 6 papers in leading AI/ML conferences. My PhD thesis explores designing and improving attention-based language models using information-theory and nonparametric methods. I have worked on interpretability, out-of-distribution generalisation, architectural efficiency, and deep learning applications across text, graphs, speech, and vision, in collaboration and leading large research teams.\n\n*Thesis:* [Nonparametric Variational Information Bottleneck: Attention-based Architectures as Latent Variable Models](https://infoscience.epfl.ch/entities/publication/dad86ab3-09eb-48bf-b6d4-8c3d903eb94d)\n\n*Supervisor:* [Dr. James Henderson](https://scholar.google.com/citations?user=CSib0ooAAAAJ&hl=en).",
+    "logo": "images/timeline/EPFL.svg"
+  },
+    {
+    "id": "uct-msc",
+    "type": "education",
+    "title": "MSc in Statistics",
+    "organization": "University of Cape Town",
+    "location": "Cape Town, South Africa",
+    "url": "https://www.uct.ac.za/",
+    "startDate": "2019-01",
+    "endDate": "2020-12",
+    "description": "**MSc in Statistics** at the [University of Cape Town](https://www.uct.ac.za/). Fully funded by the South African Statistical Association (SASA) during COVID. My thesis bridged the Biomedical Engineering and Statistics departments. I compared deep learning and statistical nonparametric methods for 3D biomedical reconstuction. \n\n*Thesis:* [Modelling non-linearity in 3D shapes: A comparative study of Gaussian Process Morphable Models and Variational Autoencoders (VAE) for 3D shape data](https://open.uct.ac.za/handle/11427/35725) \n\n*Supervisors:* [Assoc. Prof. Allan Clark](https://science.uct.ac.za/department-statistics/contacts/allan-e-clark) and [Prof. Tinashe Mutsvangwa](https://scholar.google.com/citations?user=Rrcp2eUAAAAJ&hl=en).",
+    "logo": "images/timeline/UCT.svg"
+  },
+  {
+    "id": "uct-bbusci",
+    "type": "education",
+    "title": "BBusSci in Analytics",
+    "organization": "University of Cape Town",
+    "location": "Cape Town, South Africa",
+    "url": "https://www.uct.ac.za/",
+    "startDate": "2015-01",
+    "endDate": "2018-12",
+        "description": "**BBusSci in Analytics** at the [University of Cape Town](https://www.uct.ac.za/), broad business degree graduating with Honours in Statistics. My thesis focused on natural language processing using statistical methods. \n\n*Thesis:* [Text content classification on News Articles](content/publications/honours_thesis_FHRFAB001_STRSEA001.pdf)\n\n*Advisor:* [Stefen Britz](https://science.uct.ac.za/department-statistics/contacts/stefan-britz)",
+        "logo": "images/timeline/UCT.svg"
+  }
+]
