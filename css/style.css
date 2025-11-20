@@ -712,6 +712,42 @@ footer {
    ======================================================================== */
 
 @media (max-width: 720px) {
+  /* Layout adjustments */
+  :root {
+    --padding-horizontal: 20px;
+    --gap: 12px;
+    --col-gap: 16px;
+  }
+  
+  /* Text justification for better readability */
+  .profile-text p,
+  .pub-description p,
+  .blog-description p,
+  .timeline-description {
+    text-align: justify;
+  }
+  
+  /* Header - make name smaller and stack better */
+  .header {
+    margin: 30px auto 20px auto;
+    padding: 12px var(--padding-horizontal);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .name {
+    font-size: 24px;
+  }
+  
+  .nav-links {
+    gap: 10px;
+  }
+  
+  /* Profile section */
+  .profile-section {
+    margin: 20px auto;
+  }
+  
   .profile-container {
     flex-direction: column;
     align-items: center;
@@ -726,12 +762,162 @@ footer {
     height: 140px;
   }
   
-  .pub-image {
-    width: 140px;
-    height: 140px;
+  .profile-text {
+    padding: 12px 0;
+  }
+  
+  /* Timeline improvements */
+  .timeline-section {
+    margin: 30px auto;
+  }
+  
+  .timeline-container {
+    padding-left: 0;
+  }
+  
+  .timeline-container::before {
+    display: none;
+  }
+  
+  .timeline-item {
+    flex-direction: column;
+    padding-bottom: 24px;
+    gap: 12px;
+  }
+  
+  .timeline-year {
+    position: static;
+    width: 100%;
+    text-align: left;
+    padding-right: 0;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .timeline-dot {
+    display: none;
+  }
+  
+  .timeline-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+  }
+  
+  .timeline-logo-link {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .timeline-content {
+    margin-left: 0;
+    padding: 8px 0;
+  }
+  
+  .timeline-description {
+    font-size: 15px;
+  }
+  
+  /* Publications - image on top, text below */
+  .publications {
+    margin: 30px auto;
   }
   
   .publication {
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .pub-image {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  
+  .pub-description {
+    width: 100%;
+  }
+  
+  .pub-description h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  
+  .pub-description p {
+    font-size: 14px;
+  }
+  
+  .pub-buttons {
+    justify-content: center;
+  }
+  
+  /* Blog section - image on top, text below */
+  .blog-section {
+    margin: 30px auto;
+  }
+  
+  .blog-post {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .blog-image {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  
+  .blog-description {
+    width: 100%;
+  }
+  
+  .blog-description h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  
+  .blog-description p {
+    font-size: 14px;
+  }
+  
+  /* Media section improvements */
+  .media-section {
+    margin: 30px auto;
+  }
+  
+  .media-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .media-info h3 {
+    font-size: 17px;
+  }
+  
+  .media-info p {
+    font-size: 14px;
+  }
+  
+  /* Section headers */
+  .section-header {
+    margin: 40px auto 20px auto;
+  }
+  
+  .section-header h1 {
+    font-size: 24px;
+  }
+  
+  /* Footer */
+  footer {
+    margin-top: 40px;
+    padding-bottom: 30px;
+    font-size: 12px;
   }
 }
