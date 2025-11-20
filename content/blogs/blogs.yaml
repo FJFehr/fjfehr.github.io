@@ -1,10 +1,7 @@
-# Blog Index
-# List of all blog posts with metadata
-# Generated and updated by convert-blog.py
-
-- id: "interning-at-amazon-berlin-2024-the-grind-growth-and-gratitude-2025"
-  title: "Interning at Amazon Berlin 2024: the Grind, Growth, and Gratitude"
-  date: "2025-02-25"
-  excerpt: "My time living in Berlin and working with Amazon was tough but really fulfilling and rewarding. I have a huge appreciation for the team for the opportunity!"
-  thumbnail: "content/blogs/images/berlin/wall.jpeg"
-  content_file: "content/blogs/interning-at-amazon-berlin-2024-the-grind-growth-and-gratitude-2025.json"
+- id: interning-at-amazon-berlin-2024-the-grind-growth-and-gratitude-2025
+  title: 'Interning at Amazon Berlin 2024: the Grind, Growth, and Gratitude'
+  date: '2025-02-25'
+  excerpt: My time living in Berlin and working with Amazon was tough but really fulfilling
+    and rewarding. I have a huge appreciation for the team for the opportunity!
+  thumbnail: content/blogs/images/berlin/wall.jpeg
+  content_file: content/blogs/interning-at-amazon-berlin-2024-the-grind-growth-and-gratitude-2025.json

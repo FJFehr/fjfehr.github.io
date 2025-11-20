@@ -214,6 +214,8 @@ def convert_markdown_to_json(markdown_file_path, output_directory=None):
         "title", input_path.stem.replace("-", " ").title()
     )
     post_date = frontmatter_data.get("date", datetime.now().strftime("%Y-%m-%d"))
+    post_excerpt = frontmatter_data.get("excerpt", "")
+    post_thumbnail = frontmatter_data.get("thumbnail", "")
     unique_blog_id = create_blog_id(post_title, post_date)
 
     # Create the blog data structure
@@ -240,8 +242,8 @@ def convert_markdown_to_json(markdown_file_path, output_directory=None):
         "id": unique_blog_id,
         "title": post_title,
         "date": post_date,
-        "excerpt": "",  # Left blank for manual editing
-        "thumbnail": "",  # Left blank for manual editing
+        "excerpt": post_excerpt,
+        "thumbnail": post_thumbnail,
         "content_file": f"content/blogs/{json_filename}",
     }
 

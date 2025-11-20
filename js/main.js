@@ -725,6 +725,18 @@ async function loadBlogPost() {
         
         if (blogBodyElement) {
             blogBodyElement.innerHTML = htmlContent;
+            
+            // Fix relative image paths for blog content
+            // Images in markdown are relative to content/blogs/ directory
+            // but blogs.html is at root, so we need to prepend the path
+            const images = blogBodyElement.querySelectorAll('img');
+            images.forEach(img => {
+                const src = img.getAttribute('src');
+                // Only fix relative paths that don't already include content/blogs/
+                if (src && !src.startsWith('http') && !src.startsWith('/') && !src.includes('content/blogs/')) {
+                    img.setAttribute('src', `content/blogs/${src}`);
+                }
+            });
         }
         
         // Generate table of contents

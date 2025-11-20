@@ -1,11 +1,13 @@
 ---
 title: 'Interning at Amazon Berlin 2024: the Grind, Growth, and Gratitude'
 date: 2025-02-25
+excerpt: "My time living in Berlin and working with Amazon was tough but really fulfilling and rewarding. I have a huge appreciation for the team for the opportunity!"
+thumbnail: "content/blogs/images/berlin/wall.jpeg"
 permalink: /fablogio/research-internship-at-amazon-berlin/
 ---
 
 <figure>
-  <img src="images/blogs/berlin/wall.jpeg" alt="Berlin Wall" style="width: 100%;">
+  <img src="images/berlin/wall.jpeg" alt="Berlin Wall" style="width: 100%;">
   <figcaption style="text-align: center; font-size: 14px; color: gray;">Mauerpark, Berlin: I captured a little culture at the wall. </figcaption>
 </figure>
 
@@ -28,7 +30,7 @@ Now that the adversity is there, lets consider some growth!
 ## Growth: Okay, but what did you learn?
 
 <figure>
-  <img src="images/blogs/berlin/kiting.jpeg" alt="Kiteskating at Tempelhofer Feld." style="width: 100%;">
+  <img src="images/berlin/kiting.jpeg" alt="Kiteskating at Tempelhofer Feld." style="width: 100%;">
   <figcaption style="text-align: center; font-size: 14px; color: gray;">Tempelhofer Feld, Berlin: Fabio learning to catch the wind.</figcaption>
 </figure>
 
@@ -39,7 +41,7 @@ Now that the adversity is there, lets consider some growth!
 **Adapting to a new place.** I believe adaptation is one of the most important skills today. Every place has something special, and I try to embrace it. In Cape Town, it's the wildness, sunsets, ocean, and braai. In Switzerland, it's security, punctuality, pristine mountains, and cheese. Berlin? A melting pot of culture. Graffiti, personal expression, bold hairstyles, black clothing. Alongside that, ambitious work, running, wind sports, and an incredible music scene. The food was just as diverse, from spicy hand-pulled noodles to endless plant-based options, which pushed me to experiment with vegetarian cooking. But the live music was the real highlight—classical, jazz, rock, techno. Some of the best in the world!
 
 <figure>
-  <img src="images/blogs/berlin/rainbow.jpeg" alt="Rainbow at sunset where I lived in Ostkreuz." style="width: 100%;">
+  <img src="images/berlin/rainbow.jpeg" alt="Rainbow at sunset where I lived in Ostkreuz." style="width: 100%;">
   <figcaption style="text-align: center; font-size: 14px; color: gray;">Ostkreuz, Berlin: Rainbow at sunset where I lived (quite rare!).</figcaption>
 </figure>
 
@@ -54,6 +56,6 @@ I had the privilege of working with the NGDE (Next Generation Developer Experien
 **Thank you!** I was lucky to work with this team and everyone in Berlin, who made the discussions, coffee breaks, and my time in Berlin truly memorable.
 
 <figure>
-  <img src="images/blogs/berlin/polaroids.jpeg" alt="A collection of polaroids at the kite festival." style="width: 100%;">
+  <img src="images/berlin/polaroids.jpeg" alt="A collection of polaroids at the kite festival." style="width: 100%;">
   <figcaption style="text-align: center; font-size: 14px; color: gray;">Tempelhofer Feld, Berlin: A collection of polaroids from the kite festival with friends.</figcaption>
 </figure>
