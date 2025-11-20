@@ -310,11 +310,21 @@
                     });
                 }
                 
-                // Load and parse markdown file
-                const markdownResp = await fetch(blog.markdownFile);
-                const markdownText = await markdownResp.text();
-                
-                const htmlContent = parseMarkdown(markdownText);
+                // Load and parse content file
+                let htmlContent;
+                if (blog.contentFile) {
+                    // Load JSON content
+                    const contentResp = await fetch(blog.contentFile);
+                    const contentData = await contentResp.json();
+                    htmlContent = parseMarkdown(contentData.content);
+                } else if (blog.markdownFile) {
+                    // Legacy: Load markdown file (for backward compatibility)
+                    const markdownResp = await fetch(blog.markdownFile);
+                    const markdownText = await markdownResp.text();
+                    htmlContent = parseMarkdown(markdownText);
+                } else {
+                    throw new Error('No content file specified');
+                }
                 document.getElementById('blog-body').innerHTML = htmlContent;
                 
                 // Generate table of contents
