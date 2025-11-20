@@ -105,13 +105,16 @@ Each YAML file has clear structure with comments. Just edit the fields directly 
 
 The `convert-blog.py` script converts markdown blog posts to JSON format.
 
+**Why convert to JSON?**
+Avoids needing Jekyll or other build tools - the site uses pure client-side JavaScript to fetch and render blog content from JSON files.
+
 **Commands:**
 - `python3 convert-blog.py <file.md>` - Convert single file
 - `python3 convert-blog.py <file.md> --update-index` - Convert and update blogs.yaml
 - `python3 convert-blog.py --convert-all` - Convert all markdown files in content/blogs/
 
 **What it does:**
-- Extracts YAML frontmatter (title, date)
+- Extracts YAML frontmatter (title, date, excerpt, thumbnail)
 - Generates unique blog ID
 - Creates JSON file with blog content
 - Updates `content/blogs/blogs.yaml` index
@@ -183,3 +186,15 @@ Single consolidated JavaScript file (847 lines) wrapped in IIFE for proper scopi
 - Use your editor's outline/symbol view to navigate sections
 - CSS variables at top of style.css for quick theme changes
 - All content stored in YAML - no code changes needed for updates
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+**TL;DR:**
+- ✅ Free to use as a template for your own website
+- ✅ Code, design, and structure are open source
+- ❌ Personal content (bio, photos, blog posts, publications) is NOT included
+- 🔄 You MUST replace all content in `content/` with your own
+
+The template is designed to make this easy - just edit the YAML files and swap in your content!

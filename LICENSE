@@ -1,0 +1,52 @@
+MIT License
+
+Copyright (c) 2025 Fabio Fehr
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+PERSONAL CONTENT NOTICE:
+
+The MIT License above applies to the code, design, and structure of this website
+template. However, the following personal content is NOT licensed for reuse:
+
+- All content in the content/ directory (biographical information, blog posts,
+  publications, timeline entries, media, and images)
+- Profile pictures, blog images, and any personal photographs
+- Written content, blog posts, and biographical text
+- Personal PDFs, posters, and publication materials
+
+THIRD-PARTY RESOURCES:
+
+- Social media icons in content/site/icons/ are from SVGRepo.com and licensed
+  under their respective open-source licenses (CC0 or MIT)
+- Company/university logos in content/timeline/logos/ are trademarks of their
+  respective organizations and are included for reference only
+
+HOW TO USE THIS TEMPLATE:
+
+If you fork or use this template:
+1. Delete all personal content in the content/ directory
+2. Replace with your own YAML configurations, images, and content
+3. Keep the LICENSE file and code attribution
+4. The template structure, code, and design are free to use and modify
+
+The template is designed to make content replacement easy - just edit the YAML
+files and add your own content!

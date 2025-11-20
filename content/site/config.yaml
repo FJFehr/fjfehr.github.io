@@ -7,6 +7,8 @@
 site:
   name: "Fabio J. Fehr"
   footer_name: "Fabio J. Fehr"
+  page_title: "Fabio J. Fehr"  # Browser tab title
+  nationality_flags: "🇿🇦 🇨🇭"  # Optional: displayed under profile picture
   role:
     title: "Postdoctoral Researcher"
     affiliation: "Oxford University, TVG"
@@ -38,7 +40,9 @@ layout:
   
   footer:
     year: 2025
-    tagline: "Powered entirely by vibe coding and groovy tunes ☕️🎶"
+    tagline: "Created entirely by vibe coding and groovy tunes 🤖🎸 • Open source template"
+    license_text: "Template by Fabio J. Fehr"
+    license_url: "https://github.com/FJFehr/fjfehr.github.io/blob/main/LICENSE"
 
 # ===========================
 # Contact & Social Links

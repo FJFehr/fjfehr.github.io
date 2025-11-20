@@ -312,11 +312,22 @@ async function loadSiteMetadata() {
         const config = await loadConfig();
         if (!config) return;
         
-        // Update site name in header and page title
+        // Update site name in header
         const siteNameElement = document.getElementById('site-name');
         if (siteNameElement && config.site?.name) {
             siteNameElement.textContent = config.site.name;
-            document.title = config.site.name;
+        }
+        
+        // Update page title
+        const pageTitleElement = document.getElementById('page-title');
+        if (pageTitleElement && config.site?.page_title) {
+            pageTitleElement.textContent = config.site.page_title;
+        }
+        
+        // Update nationality flags (optional)
+        const nationalityFlagsElement = document.getElementById('nationality-flags');
+        if (nationalityFlagsElement && config.site?.nationality_flags) {
+            nationalityFlagsElement.textContent = config.site.nationality_flags;
         }
         
         // Update role information
@@ -384,12 +395,18 @@ async function loadLayoutConfiguration() {
         // Update footer content
         const footerTaglineElement = document.getElementById('footer-tagline');
         const footerYearElement = document.getElementById('footer-year');
+        const footerLicenseElement = document.getElementById('footer-license');
         
         if (footerTaglineElement && config.layout?.footer?.tagline) {
             footerTaglineElement.textContent = config.layout.footer.tagline;
         }
         if (footerYearElement && config.layout?.footer?.year) {
             footerYearElement.textContent = config.layout.footer.year;
+        }
+        if (footerLicenseElement && config.layout?.footer?.license_text) {
+            const licenseUrl = config.layout.footer.license_url || '#';
+            footerLicenseElement.href = licenseUrl;
+            footerLicenseElement.textContent = config.layout.footer.license_text;
         }
     } catch (error) {
         console.error('Error loading layout configuration:', error);
@@ -653,12 +670,18 @@ async function loadBlogLayoutConfiguration() {
         
         const footerYearElement = document.getElementById('footer-year');
         const footerTaglineElement = document.getElementById('footer-tagline');
+        const footerLicenseElement = document.getElementById('footer-license');
         
         if (footerYearElement && config.layout?.footer?.year) {
             footerYearElement.textContent = config.layout.footer.year;
         }
         if (footerTaglineElement && config.layout?.footer?.tagline) {
             footerTaglineElement.textContent = config.layout.footer.tagline;
+        }
+        if (footerLicenseElement && config.layout?.footer?.license_text) {
+            const licenseUrl = config.layout.footer.license_url || '#';
+            footerLicenseElement.href = licenseUrl;
+            footerLicenseElement.textContent = config.layout.footer.license_text;
         }
     } catch (error) {
         console.error('Error loading layout configuration:', error);
