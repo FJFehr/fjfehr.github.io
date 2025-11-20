@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Quick Blog Publisher
-# Makes it super easy to publish a new blog post
+# Blog Converter Script
+# Converts markdown blog posts to JSON format for the website
 
-echo "🚀 Quick Blog Publisher"
-echo "======================="
+echo "📝 Blog Converter"
+echo "================="
 
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <markdown-file>"
@@ -15,7 +15,7 @@ if [ $# -eq 0 ]; then
     echo "This script will:"
     echo "  1. Convert your markdown to JSON"
     echo "  2. Update the blog index"
-    echo "  3. Git add, commit, and push"
+    echo "  (No git operations - you'll need to commit manually)"
     exit 1
 fi
 
@@ -32,19 +32,15 @@ python3 convert-blog.py "$MARKDOWN_FILE" --update-index
 
 if [ $? -eq 0 ]; then
     echo ""
-    echo "📦 Adding files to git..."
-    git add .
-    
-    echo "💾 Committing changes..."
-    BLOG_TITLE=$(basename "$MARKDOWN_FILE" .md)
-    git commit -m "Add blog post: $BLOG_TITLE"
-    
-    echo "🚀 Pushing to GitHub..."
-    git push
-    
+    echo "✅ Blog post converted successfully!"
     echo ""
-    echo "✅ Blog post published successfully!"
-    echo "🌐 Your blog should be live at: https://fabiojfehr.github.io"
+    echo "📋 Next steps (manual):"
+    echo "  1. Review the generated JSON files"
+    echo "  2. git add ."
+    echo "  3. git commit -m 'Add blog post: $(basename "$MARKDOWN_FILE" .md)'"
+    echo "  4. git push"
+    echo ""
+    echo "🌐 Your blog will be live at: https://fabiojfehr.github.io"
 else
     echo "❌ Conversion failed. Please check the errors above."
     exit 1

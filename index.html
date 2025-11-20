@@ -210,10 +210,6 @@
                 console.error('Error loading layout configuration:', error);
             }
         }
-            } catch (error) {
-                console.error('Error loading layout config:', error);
-            }
-        }
 
         /**
          * Load profile content from site.json or fallback to bio.md
@@ -260,7 +256,10 @@
                 .replace(/$/, '</p>');  // End with paragraph
         }
 
-        // Load social links from JSON
+        /**
+         * Load social links from contacts.json and create clickable icons
+         * Handles both emoji and image-based social icons
+         */
         async function loadSocialLinks() {
             try {
                 const response = await fetch('content/profile/contacts.json');
@@ -289,7 +288,10 @@
             }
         }
 
-        // Load publications from JSON
+        /**
+         * Load publications from publications.json and render publication cards
+         * Creates interactive publication entries with available resource buttons
+         */
         async function loadPublications() {
             try {
                 const response = await fetch('content/publications/publications.json');
@@ -341,7 +343,10 @@
             }
         }
 
-        // Load blogs from JSON
+        /**
+         * Load blog posts from blogs.json and create blog post previews
+         * Renders blog cards with titles, dates, and excerpts
+         */
         async function loadBlogs() {
             try {
                 const response = await fetch('content/blogs/blogs.json');
@@ -370,9 +375,11 @@
             }
         }
 
-        // Load design config and apply CSS variables (e.g. publication thumbnail size)
-        // Load design config and apply CSS variables
-        async function loadDesignConfig() {
+        /**
+         * Load design configuration and apply CSS custom properties
+         * Sets layout variables, typography, and image sizing from design.json
+         */
+        async function loadDesignConfiguration() {
             try {
                 const resp = await fetch('config/design.json');
                 if (!resp.ok) return;
@@ -414,7 +421,13 @@
             }
         }
 
-        // Dark mode toggle
+        /**
+         * ===================================================================
+         *                    THEME TOGGLE FUNCTIONALITY
+         * ===================================================================
+         */
+
+        // Initialize theme toggle functionality
         const themeToggle = document.getElementById('theme-toggle');
         const htmlElement = document.documentElement;
         
@@ -440,10 +453,17 @@
             themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
         });
 
-        // Load content on page load (load layout and design first so CSS vars and content apply)
-        loadLayoutConfig();
-        loadSiteMeta();
-        loadDesignConfig();
+        /**
+         * ===================================================================
+         *                    INITIALIZATION
+         * ===================================================================
+         */
+
+        // Load all content on page load
+        // Load layout and design configurations first so CSS variables are available
+        loadLayoutConfiguration();
+        loadSiteMetadata();
+        loadDesignConfiguration();
         loadProfileContent();
         loadSocialLinks();
         loadPublications();
