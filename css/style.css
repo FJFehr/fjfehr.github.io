@@ -922,4 +922,20 @@ footer {
     padding-bottom: 30px;
     font-size: 12px;
   }
+  
+  /* Disable hover effects on mobile */
+  .timeline-item:hover .timeline-dot,
+  .timeline-item:hover .timeline-year,
+  .timeline-item:hover .timeline-content,
+  .timeline-item:hover .timeline-logo {
+    background-color: inherit;
+    transform: none;
+  }
+  
+  .publication:hover,
+  .blog-post:hover,
+  .media-item:hover {
+    background-color: var(--input-bg);
+    transform: none;
+  }
 }

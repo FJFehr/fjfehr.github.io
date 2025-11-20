@@ -547,13 +547,12 @@ async function loadBlogs() {
         
         const blogCards = blogs.map(blog => {
             const formattedDate = formatDate(blog.date);
-            const responsiveImage = generateResponsiveImage(blog.thumbnail, `${blog.title} cover image`, '');
             
             return `
             <a href="blogs.html?id=${blog.id}" style="text-decoration:none;">
             <div class="blog-post">
                 <div class="blog-image">
-                    ${responsiveImage}
+                    <img src="${blog.thumbnail}" alt="${blog.title} cover image">
                 </div>
                 <div class="blog-description">
                     <h2>${blog.title}</h2>
