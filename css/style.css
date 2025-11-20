@@ -136,6 +136,8 @@ a {
   padding: 4px 8px;
   border-radius: 4px;
   transition: background-color 0.2s ease;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 html[data-theme="light"] .theme-toggle:hover {
@@ -225,8 +227,8 @@ html[data-theme="dark"] .theme-toggle:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 50%;
   background-color: var(--input-bg);
   text-decoration: none;

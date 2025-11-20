@@ -77,7 +77,7 @@
     function convertSimpleMarkdownToHtml(markdown) {
         return markdown
             .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')  // Bold text
-            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')  // Links
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')  // Links
             .replace(/\n\n+/g, '</p><p>')  // Paragraph breaks
             .replace(/^/, '<p>')  // Start with paragraph
             .replace(/$/, '</p>');  // End with paragraph
@@ -91,7 +91,7 @@
      */
     function formatInlineMarkdown(text) {
         return text
-            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')  // Links
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')  // Links
             .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')  // Bold
             .replace(/\*([^*]+)\*/g, '<em>$1</em>');  // Italic
     }
@@ -114,7 +114,7 @@ function parseMarkdown(markdown) {
     html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
     
     // Parse links [text](url)
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
     
     // Parse bold **text** or __text__
     html = html.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
@@ -223,8 +223,8 @@ async function loadTimeline() {
             
             // Make logo clickable if URL exists
             const logoHTML = item.url 
-                ? `<a href="${item.url}" target="_blank" class="timeline-logo-link"><img src="${item.logo}" alt="${item.organization}" class="timeline-logo"></a>`
-                : `<img src="${item.logo}" alt="${item.organization}" class="timeline-logo">`;
+                ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="timeline-logo-link"><img src="${item.logo}" alt="${item.organization} logo" class="timeline-logo"></a>`
+                : `<img src="${item.logo}" alt="${item.organization} logo" class="timeline-logo">`;
             
             return `
             <div class="timeline-item">
@@ -461,6 +461,7 @@ async function loadSocialLinks() {
             const socialLink = document.createElement('a');
             socialLink.href = contact.url;
             socialLink.target = '_blank';
+            socialLink.rel = 'noopener noreferrer';
             socialLink.className = 'social-link';
             socialLink.title = contact.name;
             
@@ -503,7 +504,7 @@ async function loadPublications() {
             const buttonsHTML = availableButtons.length > 0
                 ? '<div class="pub-buttons">' + 
                   availableButtons.map(btn => 
-                      `<a href="${btn.url}" class="pub-button" target="_blank" onclick="event.stopPropagation()">${btn.label}</a>`
+                      `<a href="${btn.url}" class="pub-button" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${btn.label}</a>`
                   ).join('') + 
                   '</div>'
                 : '';
@@ -512,9 +513,9 @@ async function loadPublications() {
             const formattedAuthors = pub.authors.replace(/\bF\. Fehr\b/g, '<strong>F. Fehr</strong>');
             
             return `
-            <div class="publication" onclick="window.open('${pub.paper || pub.link}', '_blank')">
+            <div class="publication" onclick="window.open('${pub.paper || pub.link}', '_blank', 'noopener,noreferrer')">
                 <div class="pub-image">
-                    <img src="${pub.image}" alt="${pub.title}">
+                    <img src="${pub.image}" alt="${pub.title} thumbnail">
                 </div>
                 <div class="pub-description">
                     <h2>${pub.title}</h2>
@@ -546,12 +547,13 @@ async function loadBlogs() {
         
         const blogCards = blogs.map(blog => {
             const formattedDate = formatDate(blog.date);
+            const responsiveImage = generateResponsiveImage(blog.thumbnail, `${blog.title} cover image`, '');
             
             return `
             <a href="blogs.html?id=${blog.id}" style="text-decoration:none;">
             <div class="blog-post">
                 <div class="blog-image">
-                    <img src="${blog.thumbnail}" alt="${blog.title}">
+                    ${responsiveImage}
                 </div>
                 <div class="blog-description">
                     <h2>${blog.title}</h2>
