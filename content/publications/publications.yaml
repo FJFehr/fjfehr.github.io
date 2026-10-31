@@ -4,8 +4,8 @@
 - id: 6
   title: "On-the-fly Weight Generation: A Hypernetwork Proof of Concept on ARC-1D"
   authors: "F. Fehr, P. Torr"
-  venue: "NeurIPS 2026 Workshop on Neural Network Artifacts as a New Data Modality"
-  conference: "NeurIPS 2026 Workshop (🔦 Spotlight)"
+  venue: "Conference on Neural Information Processing Systems"
+  conference: "NeurIPS 2026 Workshop on Neural Network Artifacts as a New Data Modality (🔦 Spotlight)"
   paper: "https://arxiv.org/abs/2610.00820"
   website: "https://fjfehr.github.io/on-the-fly/"
   code: "https://github.com/FJFehr/on-the-fly-models"
@@ -15,8 +15,8 @@
 - id: 7
   title: "When Rubrics Fail: Hallucinations Reveal Blind Spots in Medical AI Evaluation"
   authors: "G. Farrow, L. S. Li, J. Johnson, T. Wang, P. Torr, W. Bolton, F. Fehr"
-  venue: "NeurIPS 2026 Workshop on GenAI for Health"
-  conference: "NeurIPS 2026 Workshop · under review"
+  venue: "Conference on Neural Information Processing Systems"
+  conference: "NeurIPS 2026 Workshop on GenAI for Health (under review)"
   paper: "https://arxiv.org/abs/2609.12718"
   website: "https://fjfehr.github.io/when-rubrics-fail/"
   code: "https://github.com/lilysli/when-rubrics-fail"
@@ -26,8 +26,8 @@
 - id: 8
   title: "Building Legal Reward Models for Grounding and Abstention"
   authors: "R. Franzone, V. Noël, P. Wang, P. Torr, F. Fehr"
-  venue: "ICML 2026 Workshop on AI for Law"
-  conference: "ICML 2026 Workshop · under review"
+  venue: "International Conference on Machine Learning"
+  conference: "ICML 2026 Workshop on AI for Law (under review)"
   paper: "https://arxiv.org/abs/2609.14739"
   website: "https://fjfehr.github.io/legal-reward-bench/"
   code: "https://github.com/oxai/legal-reward-bench"
