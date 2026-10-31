@@ -56,8 +56,7 @@ def clear_personal_files():
     """Remove personal binary files (profile picture and CV)."""
     removed = []
 
-    profile_pic = ROOT / "content" / "site" / "profile_picture.jpg"
-    if profile_pic.exists():
+    for profile_pic in (ROOT / "content" / "site").glob("profile_picture*.jpg"):
         profile_pic.unlink()
         removed.append(str(profile_pic.relative_to(ROOT)))
 
