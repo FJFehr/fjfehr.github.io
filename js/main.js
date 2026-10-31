@@ -118,7 +118,8 @@
      * @returns {string} Formatted date string
      */
     function formatDate(dateString, options = { year: 'numeric', month: 'long', day: 'numeric' }) {
-        return new Date(dateString).toLocaleDateString('en-US', options);
+        // Date-only strings parse as UTC midnight; format in UTC so western time zones don't show the day before
+        return new Date(dateString).toLocaleDateString('en-US', { ...options, timeZone: 'UTC' });
     }
 
     /**
@@ -291,7 +292,7 @@ async function loadTimeline() {
         
         const timelineItems = timeline.map(item => {
             const startDate = new Date(item.start_date);
-            const startYear = startDate.getFullYear();
+            const startYear = startDate.getUTCFullYear();
             
             let endYear = '';
             if (item.end_date) {
@@ -299,7 +300,7 @@ async function loadTimeline() {
                     endYear = 'Present';
                 } else {
                     const endDate = new Date(item.end_date);
-                    endYear = endDate.getFullYear();
+                    endYear = endDate.getUTCFullYear();
                 }
             }
             
