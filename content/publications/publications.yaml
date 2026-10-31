@@ -7,7 +7,6 @@
   venue: "Conference on Neural Information Processing Systems"
   conference: "NeurIPS 2026 Workshop on Neural Network Artifacts as a New Data Modality (🔦 Spotlight)"
   paper: "https://arxiv.org/abs/2610.00820"
-  website: "https://fjfehr.github.io/on-the-fly/"
   code: "https://github.com/FJFehr/on-the-fly-models"
   image: "content/publications/files/on-the-fly.png"
   image_dark: "content/publications/files/on-the-fly-dark.png"
@@ -22,6 +21,7 @@
   code: "https://github.com/lilysli/when-rubrics-fail"
   dataset: "https://huggingface.co/datasets/JackJ3636/when-rubrics-fail"
   image: "content/publications/files/when-rubrics-fail.png"
+  image_dark: "content/publications/files/when-rubrics-fail-dark.png"
 
 - id: 8
   title: "Building Legal Reward Models for Grounding and Abstention"
