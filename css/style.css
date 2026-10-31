@@ -40,7 +40,8 @@ html, body {
   line-height: 1.6;
 }
 
-/* Light theme (default) */
+/* Light theme (default, also before JS sets data-theme) */
+:root,
 html[data-theme="light"] {
   --bg-color: #f8f5ee;      /* Neutral — page background */
   --input-bg: #f8f5ee;      /* Neutral — card / input surface */
@@ -720,10 +721,10 @@ html[data-theme="dark"] .pub-image .img-dark {
   color: var(--muted-color);
 }
 
-.blog-date {
+.blog-description .blog-date {
   font-weight: 600;
-  color: var(--text-color) !important;
-  font-size: 12px !important;
+  color: var(--text-color);
+  font-size: 12px;
 }
 
 

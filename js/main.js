@@ -298,7 +298,7 @@ async function loadTimeline() {
                 }
             }
             
-            const yearRange = endYear ? `${startYear} - ${endYear}` : `${startYear} -`;
+            const yearRange = endYear === startYear ? `${startYear}` : endYear ? `${startYear} - ${endYear}` : `${startYear} -`;
             
             // Same markdown parser as blog posts: paragraphs, bullet lists, bold, italic, links
             const formattedDescription = parseMarkdown(item.description || '');
@@ -472,6 +472,7 @@ async function loadLayoutConfiguration() {
 
                 navLinksElement.appendChild(linkElement);
             });
+            initNavHighlight();
         }
         
         // Update section titles
@@ -737,9 +738,6 @@ function initializeMainPage() {
     loadBlogs();
     loadTimeline();
     loadMedia();
-
-    // Highlight active nav section on scroll (after nav links are built)
-    setTimeout(initNavHighlight, 300);
 }
 
 
@@ -762,36 +760,6 @@ async function loadBlogSiteMetadata() {
         }
     } catch (error) {
         console.error('Error loading site metadata:', error);
-    }
-}
-
-/**
- * Load layout configuration for blog page (navigation and footer)
- */
-async function loadBlogLayoutConfiguration() {
-    try {
-        const config = await loadConfig();
-        if (!config) return;
-        
-        // Blog pages have no nav links — nav element is not present
-        
-        const footerYearElement = document.getElementById('footer-year');
-        const footerTaglineElement = document.getElementById('footer-tagline');
-        const footerLicenseElement = document.getElementById('footer-license');
-        
-        if (footerYearElement && config.layout?.footer?.year) {
-            footerYearElement.textContent = config.layout.footer.year;
-        }
-        if (footerTaglineElement && config.layout?.footer?.tagline) {
-            footerTaglineElement.textContent = config.layout.footer.tagline;
-        }
-        if (footerLicenseElement && config.layout?.footer?.license_text) {
-            const licenseUrl = config.layout.footer.license_url || '#';
-            footerLicenseElement.href = licenseUrl;
-            footerLicenseElement.textContent = config.layout.footer.license_text;
-        }
-    } catch (error) {
-        console.error('Error loading layout configuration:', error);
     }
 }
 
@@ -1045,7 +1013,7 @@ async function initSunLike(postId) {
  * Loads metadata and blog post content
  */
 function initializeBlogPage() {
-    loadBlogLayoutConfiguration();
+    loadLayoutConfiguration();
     loadBlogSiteMetadata();
     loadBlogPost();
     const headerTitle = document.getElementById('blog-header-title');
