@@ -410,6 +410,11 @@ html[data-theme="dark"] .theme-toggle:hover {
   border-radius: 8px;
 }
 
+/* Logos are authored for light backgrounds; keep a light card behind them in dark mode */
+html[data-theme="dark"] .timeline-item .timeline-logo {
+  background-color: #f8f5ee;
+}
+
 /* Timeline content area */
 .timeline-content {
   flex: 1;
