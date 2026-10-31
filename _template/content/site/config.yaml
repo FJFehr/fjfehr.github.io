@@ -175,9 +175,12 @@ design:
   # Colors
   colors:
     # ── Change this one line to switch the entire brand colour ──
-    active_palette: "violet"  # Options: indigo | violet | teal
+    active_palette: "primary"  # Options: primary | indigo | violet | teal
 
     palettes:
+      primary:   # muted teal (AA contrast on its own hover colour)
+        light: { link: "#267268", hover: "#DCE9E4" }
+        dark:  { link: "#8DC1BA", hover: "#1C2D2A" }
       indigo:
         light: { link: "#4f46e5", hover: "#e0e7ff" }
         dark:  { link: "#818cf8", hover: "#2d2a5e" }
@@ -201,10 +204,6 @@ design:
       text: "#e0e0e0"
       muted: "#a0a0a0"
       border: "#333"
-
-    accent:
-      light: { base: "#f59e0b", hover: "#fef3c7" }  # Amber — publication action buttons
-      dark:  { base: "#fbbf24", hover: "#451a03" }
 
   # Transitions
   transitions:

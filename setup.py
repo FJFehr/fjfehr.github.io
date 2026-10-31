@@ -65,6 +65,13 @@ def clear_personal_files():
         pdf.unlink()
         removed.append(str(pdf.relative_to(ROOT)))
 
+    # Images and files referenced only by personal content
+    for folder in ("projects/images", "publications/files", "timeline/logos"):
+        for f in (ROOT / "content" / folder).glob("*"):
+            if f.is_file():
+                f.unlink()
+                removed.append(str(f.relative_to(ROOT)))
+
     return removed
 
 
@@ -81,11 +88,11 @@ def main():
     print("  Publications cleared ->  edit content/publications/publications.yaml")
     print("  Timeline cleared     ->  edit content/timeline/timeline.yaml")
     print("  Media cleared        ->  edit content/media/media.yaml")
+    print("  Projects cleared     ->  edit content/projects/projects.yaml")
     if removed_blogs:
         print(f"  Blog posts removed   ->  {len(removed_blogs)} file(s) deleted")
     if removed_files:
-        for f in removed_files:
-            print(f"  Deleted              ->  {f}")
+        print(f"  Personal files       ->  {len(removed_files)} file(s) deleted")
     print()
     print("Next steps:")
     print("  1. Add your profile picture at content/site/profile_picture.jpg")
@@ -96,6 +103,7 @@ def main():
     print("  5. Add your work history in content/timeline/timeline.yaml")
     print("  6. Add your publications in content/publications/publications.yaml")
     print("  7. Add media highlights in content/media/media.yaml")
+    print("  8. Add highlighted projects in content/projects/projects.yaml")
     print()
     print("To add a blog post:")
     print("  python3 convert-blog.py blogs/posts/my-post.md --update-index")

@@ -1,0 +1,21 @@
+# Highlighted projects
+# Displayed at the top of the Highlights section (format from Karl El Hajal's site, karlhajal.com).
+# A project card links to `url`. Optional `children` render underneath: a child with `video_id`
+# is an embedded video card (same fields as media.yaml), otherwise a linked card with an image.
+#
+# Example:
+# - id: my-project
+#   title: "My Project"
+#   image: "content/projects/images/my-project.png"
+#   url: "https://example.com"
+#   summary: "What it is, in a sentence or two. *Markdown* works."
+#   children:
+#     - title: "Demo video"
+#       video_id: "dQw4w9WgXcQ"
+#       description: "A short description."
+#     - title: "An app"
+#       url: "https://example.com/app"
+#       image: "content/projects/images/app-screenshot.jpg"
+#       summary: "What the app does."
+
+[]

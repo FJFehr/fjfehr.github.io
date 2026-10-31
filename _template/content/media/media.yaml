@@ -8,6 +8,7 @@
 #   video_id    (required) — YouTube video ID (the part after ?v= in the URL)
 #                            Can include a timestamp: "VIDEO_ID?si=TOKEN" or just "VIDEO_ID"
 #   timestamp   (optional) — start time in seconds (default: 0)
+#   vertical    (optional) — true for 9:16 videos such as YouTube Shorts
 #   description (optional) — short description shown below the video
 
 # Example:

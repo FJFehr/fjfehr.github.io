@@ -343,7 +343,7 @@ function mediaCard(item) {
                 </div>
                 <div class="media-info">
                     <h3>${formatInlineMarkdown(item.title)}</h3>
-                    <p>${formatInlineMarkdown(item.description)}</p>
+                    <p>${formatInlineMarkdown(item.description || '')}</p>
                 </div>
             </div>
             `;
@@ -658,7 +658,7 @@ async function loadProjects() {
                     ${child.image ? `<img class="project-child-img" width="100" height="167" src="${child.image}" alt="${child.title} on a phone" loading="lazy">` : ''}
                     <div>
                         <h2>${child.title}</h2>
-                        <p>${formatInlineMarkdown(child.summary)}</p>
+                        <p>${formatInlineMarkdown(child.summary || '')}</p>
                     </div>
                 </a>`).join('');
             const childrenHTML = (videos || children)
@@ -668,7 +668,7 @@ async function loadProjects() {
                     ${imageHTML}
                     <div class="pub-description">
                         <h2>${project.title}</h2>
-                        <p>${formatInlineMarkdown(project.summary)}</p>
+                        <p>${formatInlineMarkdown(project.summary || '')}</p>
                         ${period}${badge}
                     </div>`;
             const card = project.url

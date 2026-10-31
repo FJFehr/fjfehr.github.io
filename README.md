@@ -35,6 +35,7 @@ This replaces all personal data with blank starter templates and clears blog pos
 - `content/publications/publications.yaml` — your publications
 - `content/timeline/timeline.yaml` — your work/education history
 - `content/media/media.yaml` — your media highlights
+- `content/projects/projects.yaml` — highlighted projects (optional)
 - Replace `content/site/profile_picture.jpg` with your photo
 
 ## Quick Start
