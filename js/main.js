@@ -117,21 +117,6 @@
     }
 
     /**
-     * Convert basic markdown formatting to HTML
-     * Handles bold text, links, and paragraph breaks
-     * @param {string} markdown - Raw markdown text
-     * @returns {string} HTML formatted text
-     */
-    function convertSimpleMarkdownToHtml(markdown) {
-        return markdown
-            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')  // Bold text
-            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')  // Links
-            .replace(/\n\n+/g, '</p><p>')  // Paragraph breaks
-            .replace(/^/, '<p>')  // Start with paragraph
-            .replace(/$/, '</p>');  // End with paragraph
-    }
-
-    /**
      * Apply inline markdown formatting (bold, italic, links)
      * Used for single-line text like titles and descriptions
      * @param {string} text - Text with markdown formatting
@@ -539,8 +524,8 @@ async function loadProfileContent() {
             markdownContent = await bioResponse.text();
         }
         
-        // Convert markdown to HTML
-        const htmlContent = convertSimpleMarkdownToHtml(markdownContent);
+        // Same markdown parser as the timeline and blog posts (paragraphs, lists, bold, italic, links)
+        const htmlContent = parseMarkdown(markdownContent);
         const profileElement = document.getElementById('profile-content');
         if (profileElement) {
             profileElement.innerHTML = htmlContent;
