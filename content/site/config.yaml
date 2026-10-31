@@ -14,7 +14,7 @@ site:
   profile_picture_path: "content/site/profile_picture_alt2.jpg"  # Path to profile picture
   # Optional: per-theme CSS filters on the photo, and an image that slides onto it in dark mode
   profile_picture_effects:
-    light_filter: "sepia(0.25) saturate(1.3) brightness(1.08)"  # warmer, brighter day look
+    light_filter: "sepia(0.25) hue-rotate(-10deg) saturate(1.4) brightness(1.08)"  # warmer, more orange day look
     dark_filter: "grayscale(1) contrast(1.1)"                    # black and white at night
     dark_overlay:
       src: "content/site/sunglasses.png"
