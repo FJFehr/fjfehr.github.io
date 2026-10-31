@@ -427,10 +427,12 @@ html[data-theme="dark"] .theme-toggle:hover {
 }
 
 .timeline-description p,
+.timeline-description ol,
 .timeline-description ul {
   margin: 0 0 12px 0;
 }
 
+.timeline-description ol,
 .timeline-description ul {
   padding-left: 20px;
 }
