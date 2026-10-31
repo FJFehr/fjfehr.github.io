@@ -19,7 +19,7 @@ site:
     dark_overlay:
       src: "content/site/sunglasses.png"
       left: "21.7%"     # position and width as % of the photo, lined up with the eyes
-      top: "33.4%"
+      top: "35%"
       width: "64%"
       rotate: "0deg"
   site_url: "https://fjfehr.github.io"  # Your GitHub Pages URL — no trailing slash (used for OG tags in blog posts)
