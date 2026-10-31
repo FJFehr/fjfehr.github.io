@@ -44,6 +44,7 @@
   code: "https://github.com/oxai/annocaselaw"
   dataset: "https://huggingface.co/datasets/riltonfranzone/annocaselaw"
   image: "content/publications/files/annocaselaw.png"
+  image_dark: "content/publications/files/annocaselaw-dark.png"
 
 - id: 1
   title: "CoRet: Improved Retriever for Code Editing"
