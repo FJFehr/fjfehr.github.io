@@ -9,3 +9,5 @@
 # Claude
 .playwright*
 .agents/
+# Local planning notes
+TODO.md

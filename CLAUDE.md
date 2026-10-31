@@ -22,6 +22,16 @@ Personal portfolio and blog hosted on GitHub Pages. No build tools, bundlers, or
 **Other converter options:**
 - `python3 convert-blog.py --convert-all` — regenerate all blog HTML from markdown sources
 
+## Template upkeep (always)
+
+This repo is also a public GitHub template. `python3 setup.py` must leave a clean, working, personal-data-free site. With every change, keep it that way:
+- New content file or field in `content/` → add a blank or commented example to `_template/content/` (same path) and update the field docs in its header comment.
+- New personal asset folder → have `setup.py` clear it (`clear_personal_files`).
+- Removed or renamed config option → remove or rename it in `_template/content/site/config.yaml` too.
+- Optional fields must stay optional in `js/main.js`: a missing field must not blank a section.
+- After template-affecting changes, test on a scratch copy: run `setup.py`, check every YAML parses, and grep for personal names.
+- `TODO.md` is local planning notes: never commit it.
+
 ## Architecture
 
 **Single-file philosophy:** All CSS is in `css/style.css` and all JavaScript is in `js/main.js`. Both files use clearly marked section headers (`/* ====== SECTION ====== */` and `/** === SECTION === */`) so you can navigate by searching.
