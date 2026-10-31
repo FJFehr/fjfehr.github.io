@@ -37,7 +37,7 @@
 
 - id: 9
   title: "AnnoCaseLaw: Legal Annotation Benchmark of Civil Negligence"
-  authors: "R. Franzone*, M. Sesodia*, A. Petrova, J. Armour, T. Lukasiewicz, O.-M. Camburu, P. K. Dokania, P. Torr, C. Schroeder de Witt†, F. Fehr†"
+  authors: "R. Franzone*, M. Sesodia*, A. Petrova, J. Armour, T. Lukasiewicz, O.-M. Camburu, P. K. Dokania, P. Torr, C. Schroeder de Witt, F. Fehr"
   venue: "arXiv preprint"
   conference: "Under review"
   paper: "https://arxiv.org/abs/2503.00128"
