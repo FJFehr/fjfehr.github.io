@@ -171,9 +171,12 @@ design:
   # Colors
   colors:
     # ── Change this one line to switch the entire brand colour ──
-    active_palette: "violet"  # Options: indigo | violet | teal
+    active_palette: "primary"  # Options: primary | indigo | violet | teal
 
     palettes:
+      primary:   # teal from the On-the-fly site; light hover lightened from #C1DDDA so links/venue tags keep AA contrast on it
+        light: { link: "#267268", hover: "#DCE9E4" }
+        dark:  { link: "#8DC1BA", hover: "#1C2D2A" }
       indigo:
         light: { link: "#4f46e5", hover: "#e0e7ff" }
         dark:  { link: "#818cf8", hover: "#2d2a5e" }

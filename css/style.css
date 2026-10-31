@@ -27,10 +27,10 @@ html, body {
   
   /* Palette brand vars — set by JS from config.yaml active_palette.
      Fallbacks match the default palette so there is no flash on load. */
-  --palette-light-link: #7c3aed;
-  --palette-light-hover: #ede9fe;
-  --palette-dark-link: #a78bfa;
-  --palette-dark-hover: #2e1065;
+  --palette-light-link: #267268;
+  --palette-light-hover: #DCE9E4;
+  --palette-dark-link: #8DC1BA;
+  --palette-dark-hover: #1C2D2A;
 
   /* Typography */
   --font-serif: 'Playfair Display', 'Georgia', serif;
