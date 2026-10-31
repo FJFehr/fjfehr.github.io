@@ -24,9 +24,18 @@
   description: |
     **Postdoctoral Researcher (9 months)** at the [University of Oxford](https://eng.ox.ac.uk/) in the [Torr Vision Group](https://torrvision.com/). My research focused on trustworthy AI and evaluation in high-stakes domains, alongside foundational machine learning. I explored weight-space learning with hypernetworks, generating neural networks directly from examples; legal AI, investigating legal reasoning through annotation and evidence grounding; and medical AI, revealing limitations of rubric-based evaluations in assessing hallucinations.
 
-    Led legal and medical AI research projects at [OXAI](https://www.oxai.org/), mentoring teams through to publication. Organised the inaugural [AI4Law workshop at ICML 2026](https://sites.google.com/view/ai4law-icml2026), bringing together the legal AI research community, and lectured in Advanced AI at [Lady Margaret Hall](https://www.lmh.ox.ac.uk/study-here/lmh-summer-programmes/courses-and-dates/advanced-artificial-intelligence-and-machine-learning-computer-vision). Member of [Wolfson College](https://www.wolfson.ox.ac.uk/) and active in Oxford's Surf and Kitesurfing Clubs.
+    - *OXAI:* Led legal and medical AI research projects at [OXAI](https://www.oxai.org/), mentoring teams through to publication.
+    - *Workshop:* Organised the inaugural [AI4Law workshop at ICML 2026](https://sites.google.com/view/ai4law-icml2026), bringing together the legal AI research community.
+    - *Teaching:* Lectured in Advanced AI at [Lady Margaret Hall](https://www.lmh.ox.ac.uk/study-here/lmh-summer-programmes/courses-and-dates/advanced-artificial-intelligence-and-machine-learning-computer-vision).
+    - *College:* Member of [Wolfson College](https://www.wolfson.ox.ac.uk/).
+    - *Clubs:* Surfing and Kitesurfing.
 
-    *Publications (3 last-author, 1 first-author):* [On-the-fly Weight Generation](https://arxiv.org/abs/2610.00820) - NeurIPS 2026 Workshop (Spotlight); [Building Legal Reward Models](https://arxiv.org/abs/2609.14739) - ICML 2026 AI4Law + review; [AnnoCaseLaw](https://arxiv.org/abs/2503.00128) + review; [When Rubrics Fail](https://arxiv.org/abs/2609.12718) - NeurIPS 2026 GenAI4Health + review.
+    *Publications (3 last-author, 1 first-author):*
+
+    - [On-the-fly Weight Generation](https://arxiv.org/abs/2610.00820) - NeurIPS 2026 Workshop (Spotlight)
+    - [Building Legal Reward Models](https://arxiv.org/abs/2609.14739) - ICML 2026 AI4Law + review
+    - [AnnoCaseLaw](https://arxiv.org/abs/2503.00128) + review
+    - [When Rubrics Fail](https://arxiv.org/abs/2609.12718) - NeurIPS 2026 GenAI4Health + review
 
     *Supervisor:* [Prof. Philip Torr](https://scholar.google.com/citations?user=kPxa2w0AAAAJ&hl=en).
   logo: "content/timeline/logos/oxford.svg"
