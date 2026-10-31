@@ -2,6 +2,17 @@
 # Chronological list of work experience and education
 # Displayed on the homepage in the Timeline section
 
+- id: "aleph-alpha"
+  type: "work"
+  title: "AI Research Scientist"
+  organization: "Aleph Alpha · Cohere"
+  location: "Zurich, Switzerland"
+  url: "https://openeurollm.eu/"
+  start_date: "2026-11"
+  end_date: "present"
+  description: "**AI Research Scientist** at Aleph Alpha · Cohere, working on [OpenEuroLLM](https://openeurollm.eu/): open European large language models and their evaluation."
+  logo: "content/timeline/logos/aleph-alpha-cohere.svg"
+
 - id: "oxford"
   type: "work"
   title: "Postdoctoral Researcher"
