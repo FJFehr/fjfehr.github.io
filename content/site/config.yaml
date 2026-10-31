@@ -25,8 +25,6 @@ layout:
     navigation:
       - label: "Experience"
         href: "#timeline"
-      - label: "Projects"
-        href: "#projects-heading"
       - label: "Highlights"
         href: "#media-heading"
       - label: "Publications"
@@ -37,8 +35,6 @@ layout:
   sections:
     timeline:
       title: "Timeline"
-    projects:
-      title: "Projects"
     media:
       title: "Highlights"
     publications:

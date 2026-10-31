@@ -1,6 +1,7 @@
-# Projects
-# Displayed on the homepage in the Projects section (format from Karl El Hajal's site, karlhajal.com)
-# A project card links to `url`; optional `children` render as smaller linked cards underneath.
+# Highlighted projects
+# Displayed at the top of the Highlights section (format from Karl El Hajal's site, karlhajal.com).
+# A project card links to `url`. Optional `children` render underneath: a child with `video_id`
+# is an embedded video card (same fields as media.yaml), otherwise a linked card with an image.
 
 - id: synthia
   title: "SYNTHIA"
@@ -8,6 +9,16 @@
   url: "https://synthia.space"
   summary: "AI that jams with you *live*! Three PhDs in AI who are also musicians (Karl El Hajal, Laurent Colbois, and myself) came up with the idea while making music in Karl's home studio. Powered by a custom generative AI MIDI model, SYNTHIA won first place and CHF 15,000 (the Idiap-IdeArk Prize) at the Idiap Create Challenge 2025, where we performed it live on stage. Today, synthia.space is a collection of musical experiments:"
   children:
+    - title: "2026 SYNTH*IA* - Cobra Train 🐍🚂"
+      video_id: "VRmfnVW9-uQ"
+      vertical: true
+      description: "A song release jamming with SYNTH*IA*."
+    - title: "2026 Jamming with SYNTH*IA*: Live in Cambridge"
+      video_id: "bR_xYwox6qs"
+      description: "Presenting and jamming live with SYNTH*IA* in Cambridge."
+    - title: "2025 SYNTH*IA* - Idiap Create Challenge Winners"
+      video_id: "Vhwi-pR9_wg"
+      description: "Our winning live performance at the Idiap Create Challenge 2025."
     - title: "Beat Cuisine"
       url: "https://synthia.space/cuisine"
       image: "content/projects/images/beat-cuisine-screenshot.jpg"
@@ -20,6 +31,3 @@
       url: "https://synthia.space/riffdle"
       image: "content/projects/images/riffdle-screenshot.jpg"
       summary: "Wordle for music: listen to the riff, play it back on the keyboard, and get clues on each note."
-    - title: "Source code"
-      url: "https://github.com/KarlHajal/synthia"
-      summary: "The SYNTHIA app on GitHub, built with Karl El Hajal."

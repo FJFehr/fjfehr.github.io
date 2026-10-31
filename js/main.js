@@ -322,23 +322,16 @@ async function loadTimeline() {
  * Load and display media/highlights from media.json
  * Creates YouTube embed iframes with optional timestamps
  */
-async function loadMedia() {
-    try {
-        const mediaItems = await loadYaml('content/media/media.yaml');
-        
-        const container = document.getElementById('media-list');
-        if (!container || !mediaItems) return;
-        
-        const mediaCards = mediaItems.map(item => {
-            const videoUrl = item.timestamp 
-                ? `https://www.youtube.com/embed/${item.video_id}?start=${item.timestamp}`
-                : `https://www.youtube.com/embed/${item.video_id}`;
-            
-            // Format title and description with markdown support
-            const formattedTitle = formatInlineMarkdown(item.title);
-            const formattedDescription = formatInlineMarkdown(item.description);
-            
-            return `
+/**
+ * Build one highlight card: an embedded YouTube player with title and description.
+ * Used by the Highlights grid and by video sub-cards under a highlighted project.
+ */
+function mediaCard(item) {
+    const videoUrl = item.timestamp
+        ? `https://www.youtube.com/embed/${item.video_id}?start=${item.timestamp}`
+        : `https://www.youtube.com/embed/${item.video_id}`;
+
+    return `
             <div class="media-item">
                 <div class="media-thumbnail${item.vertical ? ' vertical' : ''}">
                     <iframe 
@@ -349,14 +342,21 @@ async function loadMedia() {
                     </iframe>
                 </div>
                 <div class="media-info">
-                    <h3>${formattedTitle}</h3>
-                    <p>${formattedDescription}</p>
+                    <h3>${formatInlineMarkdown(item.title)}</h3>
+                    <p>${formatInlineMarkdown(item.description)}</p>
                 </div>
             </div>
             `;
-        });
+}
+
+async function loadMedia() {
+    try {
+        const mediaItems = await loadYaml('content/media/media.yaml');
         
-        container.innerHTML = mediaCards.join('');
+        const container = document.getElementById('media-list');
+        if (!container || !mediaItems) return;
+        
+        container.innerHTML = mediaItems.map(mediaCard).join('');
         
     } catch (error) {
         console.error('Error loading media:', error);
@@ -471,7 +471,6 @@ async function loadLayoutConfiguration() {
         updateSectionTitle('publications-heading', config.layout?.sections?.publications?.title);
         updateSectionTitle('blog-heading', config.layout?.sections?.blog?.title);
         updateSectionTitle('media-heading', config.layout?.sections?.media?.title);
-        updateSectionTitle('projects-heading', config.layout?.sections?.projects?.title);
         
         // Update blog subtitle
         const blogSubtitleElement = document.getElementById('blog-subtitle');
@@ -636,8 +635,9 @@ async function loadPublications() {
 }
 
 /**
- * Load projects from projects.yaml (ported from Karl El Hajal's site, karlhajal.com).
- * Each project is a linked card; optional `children` render as smaller linked cards underneath.
+ * Load highlighted projects from projects.yaml into the top of the Highlights section
+ * (card format ported from Karl El Hajal's site, karlhajal.com). Each project is a linked card;
+ * optional `children` render underneath as linked cards or, with a video_id, as video cards.
  */
 async function loadProjects() {
     try {
@@ -651,7 +651,8 @@ async function loadProjects() {
                 : '';
             const period = project.period ? `<p><b class="pub-conference">${project.period}</b></p>` : '';
             const badge = project.badge ? `<p><b class="pub-conference">${project.badge}</b></p>` : '';
-            const children = (project.children || []).map(child => `
+            // A child with a video_id becomes an embedded highlight card; otherwise a linked card
+            const children = (project.children || []).map(child => child.video_id ? mediaCard(child) : `
                 <a class="project-child" href="${child.url}" target="_blank" rel="noopener noreferrer">
                     ${child.image ? `<img class="project-child-img" width="100" height="167" src="${child.image}" alt="${child.title} on a phone" loading="lazy">` : ''}
                     <div>

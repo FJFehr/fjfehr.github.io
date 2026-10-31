@@ -2,23 +2,6 @@
 # YouTube videos and media appearances
 # Displayed on the homepage in the Highlights section
 
-- id: 7
-  title: "2026 SYNTH*IA* - Cobra Train 🐍🚂"
-  video_id: "VRmfnVW9-uQ"
-  vertical: true
-  description: "A song release jamming with SYNTH*IA*, the AI band member built with [Karl Hajal](https://karlhajal.com/)."
-
-- id: 6
-  title: "2026 Jamming with SYNTH*IA*: Live in Cambridge"
-  video_id: "bR_xYwox6qs"
-  description: "Presenting and jamming live with SYNTH*IA* in Cambridge."
-
-- id: 1
-  title: "2025 SYNTH*IA* - Idiap Create Challenge Winners"
-  video_id: "Vhwi-pR9_wg"
-  timestamp: 0
-  description: "Winners of the Idiap Create Challenge 2025, built with [Karl Hajal](https://karlhajal.com/). The first AI band member that JAMS with you, powered by a custom generative *AI* MIDI model. [synthia.space](https://www.synthia.space/) · [Code](https://github.com/KarlHajal/synthia)"
-
 - id: 2
   title: "2025 PhD Defence"
   video_id: "wEDG70-SO0A?si=wis7LEKMOaTxsvg8"

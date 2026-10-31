@@ -670,7 +670,7 @@ html[data-theme="dark"] .pub-image .img-dark {
 
 
 /* ========================================================================
-   PROJECTS SECTION (ported from Karl El Hajal's site, karlhajal.com)
+   HIGHLIGHTED PROJECTS (top of Highlights; ported from Karl El Hajal's site, karlhajal.com)
    ======================================================================== */
 
 a.publication.project {
@@ -867,7 +867,6 @@ header h1,
 }
 
 #publications-heading,
-#projects-heading,
 #media-heading,
 #blog-heading {
   scroll-margin-top: var(--header-offset);
