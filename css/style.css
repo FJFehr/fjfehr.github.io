@@ -713,6 +713,10 @@ a.publication.project:hover h2 {
   gap: 12px;
 }
 
+.project-children-grid + .project-children-grid {
+  margin-top: 12px;
+}
+
 .project-child {
   display: flex;
   gap: 14px;

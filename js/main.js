@@ -651,8 +651,9 @@ async function loadProjects() {
                 : '';
             const period = project.period ? `<p><b class="pub-conference">${project.period}</b></p>` : '';
             const badge = project.badge ? `<p><b class="pub-conference">${project.badge}</b></p>` : '';
-            // A child with a video_id becomes an embedded highlight card; otherwise a linked card
-            const children = (project.children || []).map(child => child.video_id ? mediaCard(child) : `
+            // Children with a video_id become embedded highlight cards (own row); the rest are linked cards
+            const videos = (project.children || []).filter(child => child.video_id).map(mediaCard).join('');
+            const children = (project.children || []).filter(child => !child.video_id).map(child => `
                 <a class="project-child" href="${child.url}" target="_blank" rel="noopener noreferrer">
                     ${child.image ? `<img class="project-child-img" width="100" height="167" src="${child.image}" alt="${child.title} on a phone" loading="lazy">` : ''}
                     <div>
@@ -660,8 +661,8 @@ async function loadProjects() {
                         <p>${formatInlineMarkdown(child.summary)}</p>
                     </div>
                 </a>`).join('');
-            const childrenHTML = children
-                ? `<div class="project-children">${project.children_label ? `<p class="project-children-label">${project.children_label}</p>` : ''}<div class="project-children-grid">${children}</div></div>`
+            const childrenHTML = (videos || children)
+                ? `<div class="project-children">${project.children_label ? `<p class="project-children-label">${project.children_label}</p>` : ''}${videos ? `<div class="project-children-grid">${videos}</div>` : ''}${children ? `<div class="project-children-grid">${children}</div>` : ''}</div>`
                 : '';
             const cardInner = `
                     ${imageHTML}
