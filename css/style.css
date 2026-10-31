@@ -597,6 +597,16 @@ html[data-theme="dark"] .theme-toggle:hover {
   display: block;
 }
 
+/* Optional dark-mode thumbnail (image_dark in publications.yaml) */
+.pub-image .img-dark,
+html[data-theme="dark"] .pub-image .img-light {
+  display: none;
+}
+
+html[data-theme="dark"] .pub-image .img-dark {
+  display: block;
+}
+
 .pub-description {
   flex: 1;
 }

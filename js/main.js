@@ -606,7 +606,9 @@ async function loadPublications() {
             // Build buttons HTML for available resources
             const buttons = [
                 { key: 'paper', label: 'Paper', url: pub.paper || pub.link },
+                { key: 'website', label: 'Website', url: pub.website },
                 { key: 'code', label: 'Code', url: pub.code },
+                { key: 'dataset', label: 'Dataset', url: pub.dataset },
                 { key: 'poster', label: 'Poster', url: pub.poster },
                 { key: 'slides', label: 'Slides', url: pub.slides },
                 { key: 'video', label: 'Video', url: pub.video },
@@ -630,7 +632,9 @@ async function loadPublications() {
             return `
             <div class="publication" onclick="window.open('${pub.paper || pub.link}', '_blank', 'noopener,noreferrer')">
                 <div class="pub-image">
-                    <img src="${pub.image}" alt="${pub.title} thumbnail">
+                    ${pub.image_dark
+                        ? `<img class="img-light" src="${pub.image}" alt="${pub.title} thumbnail"><img class="img-dark" src="${pub.image_dark}" alt="${pub.title} thumbnail">`
+                        : `<img src="${pub.image}" alt="${pub.title} thumbnail">`}
                 </div>
                 <div class="pub-description">
                     <h2>${pub.title}</h2>
