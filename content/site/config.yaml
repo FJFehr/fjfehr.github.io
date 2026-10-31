@@ -201,9 +201,6 @@ design:
       muted: "#a0a0a0"
       border: "#333"
 
-    accent:
-      light: { base: "#C9A227", hover: "#EFE3BE" }  # Gold — publication button hover (mirrors css/style.css)
-      dark:  { base: "#D6B95D", hover: "#332C1A" }
   
   # Transitions
   transitions:
