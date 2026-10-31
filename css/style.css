@@ -426,7 +426,16 @@ html[data-theme="dark"] .theme-toggle:hover {
   line-height: 1.5;
 }
 
-.timeline-description:last-child {
+.timeline-description p,
+.timeline-description ul {
+  margin: 0 0 12px 0;
+}
+
+.timeline-description ul {
+  padding-left: 20px;
+}
+
+.timeline-description > :last-child {
   margin-bottom: 0;
 }
 

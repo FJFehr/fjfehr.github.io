@@ -305,12 +305,9 @@ async function loadTimeline() {
             
             const yearRange = endYear ? `${startYear} - ${endYear}` : `${startYear} -`;
             
-            // Format description with markdown support and paragraph breaks
-            let formattedDescription = item.description || '';
-            formattedDescription = formatInlineMarkdown(formattedDescription);
-            // Support paragraph breaks with \n\n
-            formattedDescription = formattedDescription.replace(/\n\n/g, '</p><p class="timeline-description">');
-            
+            // Same markdown parser as blog posts: paragraphs, bullet lists, bold, italic, links
+            const formattedDescription = parseMarkdown(item.description || '');
+
             // Make logo clickable if URL exists
             const logoHTML = item.url 
                 ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="timeline-logo-link"><img src="${item.logo}" alt="${item.organization} logo" class="timeline-logo"></a>`
@@ -322,7 +319,7 @@ async function loadTimeline() {
                 <div class="timeline-year">${yearRange}</div>
                 ${logoHTML}
                 <div class="timeline-content">
-                    <p class="timeline-description">${formattedDescription}</p>
+                    <div class="timeline-description">${formattedDescription}</div>
                 </div>
             </div>
             `;
