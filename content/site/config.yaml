@@ -15,7 +15,7 @@ site:
   site_url: "https://fjfehr.github.io"  # Your GitHub Pages URL — no trailing slash (used for OG tags in blog posts)
   role:
     title: "AI Research Scientist"
-    affiliation: "Cohere"
+    affiliation: "Cohere · Aleph Alpha"
 
 # ===========================
 # Layout & Navigation
