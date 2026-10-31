@@ -15,8 +15,8 @@ site:
   profile_picture_path: "content/site/profile_picture.jpg"  # Path to profile picture
   site_url: "https://fjfehr.github.io"  # Your GitHub Pages URL — no trailing slash (used for OG tags in blog posts)
   role:
-    title: "Postdoctoral Researcher"
-    affiliation: "Oxford University, TVG"
+    title: "AI Research Scientist"
+    affiliation: "Cohere"
 
 # ===========================
 # Layout & Navigation
