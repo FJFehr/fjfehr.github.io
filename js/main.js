@@ -471,6 +471,7 @@ async function loadLayoutConfiguration() {
         updateSectionTitle('publications-heading', config.layout?.sections?.publications?.title);
         updateSectionTitle('blog-heading', config.layout?.sections?.blog?.title);
         updateSectionTitle('media-heading', config.layout?.sections?.media?.title);
+        updateSectionTitle('projects-heading', config.layout?.sections?.projects?.title);
         
         // Update blog subtitle
         const blogSubtitleElement = document.getElementById('blog-subtitle');
@@ -635,6 +636,54 @@ async function loadPublications() {
 }
 
 /**
+ * Load projects from projects.yaml (ported from Karl El Hajal's site, karlhajal.com).
+ * Each project is a linked card; optional `children` render as smaller linked cards underneath.
+ */
+async function loadProjects() {
+    try {
+        const projects = await loadYaml('content/projects/projects.yaml');
+        const list = document.getElementById('projects-list');
+        if (!list || !projects) return;
+
+        list.innerHTML = projects.map(project => {
+            const imageHTML = project.image
+                ? `<div class="pub-image"><img src="${project.image}" alt="${project.title} thumbnail" loading="lazy" decoding="async"></div>`
+                : '';
+            const period = project.period ? `<p><b class="pub-conference">${project.period}</b></p>` : '';
+            const badge = project.badge ? `<p><b class="pub-conference">${project.badge}</b></p>` : '';
+            const children = (project.children || []).map(child => `
+                <a class="project-child" href="${child.url}" target="_blank" rel="noopener noreferrer">
+                    ${child.image ? `<img class="project-child-img" width="100" height="167" src="${child.image}" alt="${child.title} on a phone" loading="lazy">` : ''}
+                    <div>
+                        <h2>${child.title}</h2>
+                        <p>${formatInlineMarkdown(child.summary)}</p>
+                    </div>
+                </a>`).join('');
+            const childrenHTML = children
+                ? `<div class="project-children">${project.children_label ? `<p class="project-children-label">${project.children_label}</p>` : ''}<div class="project-children-grid">${children}</div></div>`
+                : '';
+            const cardInner = `
+                    ${imageHTML}
+                    <div class="pub-description">
+                        <h2>${project.title}</h2>
+                        <p>${formatInlineMarkdown(project.summary)}</p>
+                        ${period}${badge}
+                    </div>`;
+            const card = project.url
+                ? `<a class="publication project" href="${project.url}" target="_blank" rel="noopener noreferrer">${cardInner}</a>`
+                : `<div class="publication project is-static">${cardInner}</div>`;
+            return `
+            <div class="project-group">
+                ${card}
+                ${childrenHTML}
+            </div>`;
+        }).join('');
+    } catch (error) {
+        console.error('Error loading projects:', error);
+    }
+}
+
+/**
  * Load blog posts from blogs.json and create blog post previews
  * Renders blog cards with titles, dates, and excerpts
  */
@@ -720,6 +769,7 @@ function initializeMainPage() {
     loadProfileContent();
     loadSocialLinks();
     loadPublications();
+    loadProjects();
     loadBlogs();
     loadTimeline();
     loadMedia();

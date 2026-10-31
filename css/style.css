@@ -670,6 +670,114 @@ html[data-theme="dark"] .pub-image .img-dark {
 
 
 /* ========================================================================
+   PROJECTS SECTION (ported from Karl El Hajal's site, karlhajal.com)
+   ======================================================================== */
+
+a.publication.project {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.publication.project:hover h2 {
+  color: var(--link-color);
+}
+
+.publication.project.is-static {
+  cursor: default;
+}
+
+.project-group {
+  margin-bottom: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--input-bg);
+  overflow: hidden;
+}
+
+.project-group > .publication {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.project-children {
+  padding: 4px 16px 16px;
+}
+
+.project-children-label {
+  margin: 0 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-color);
+}
+
+.project-children-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.project-child {
+  display: flex;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-color);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.project-child:hover {
+  background-color: var(--hover-bg);
+}
+
+.project-child:hover h2 {
+  color: var(--link-color);
+}
+
+.project-child-img {
+  width: 100px;
+  height: auto;
+  align-self: flex-start;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.project-child h2 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.project-child p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted-color);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 7;
+  overflow: hidden;
+}
+
+@media (max-width: 720px) {
+  .publication.project .pub-image,
+  .publication.project .pub-image img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .publication.project .pub-image {
+    margin: 0 auto;
+  }
+}
+
+
+/* ========================================================================
    BLOG SECTION
    ======================================================================== */
 
@@ -759,6 +867,7 @@ header h1,
 }
 
 #publications-heading,
+#projects-heading,
 #media-heading,
 #blog-heading {
   scroll-margin-top: var(--header-offset);

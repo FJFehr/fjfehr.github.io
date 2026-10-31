@@ -1,0 +1,25 @@
+# Projects
+# Displayed on the homepage in the Projects section (format from Karl El Hajal's site, karlhajal.com)
+# A project card links to `url`; optional `children` render as smaller linked cards underneath.
+
+- id: synthia
+  title: "SYNTHIA"
+  image: "content/projects/images/synthia.png"
+  url: "https://synthia.space"
+  summary: "AI that jams with you *live*! Three PhDs in AI who are also musicians (Karl El Hajal, Laurent Colbois, and myself) came up with the idea while making music in Karl's home studio. Powered by a custom generative AI MIDI model, SYNTHIA won first place and CHF 15,000 (the Idiap-IdeArk Prize) at the Idiap Create Challenge 2025, where we performed it live on stage. Today, synthia.space is a collection of musical experiments:"
+  children:
+    - title: "Beat Cuisine"
+      url: "https://synthia.space/cuisine"
+      image: "content/projects/images/beat-cuisine-screenshot.jpg"
+      summary: "Cook a beat in the browser: pick patterns, set the BPM and key, and record loops like a pedal. Jam with Sue, the AI sous chef: you play a loop and Sue plays one back."
+    - title: "Beat Gallery"
+      url: "https://synthia.space/gallery"
+      image: "content/projects/images/beat-gallery-screenshot.jpg"
+      summary: "Publish your beats and browse what others cooked."
+    - title: "Riffdle"
+      url: "https://synthia.space/riffdle"
+      image: "content/projects/images/riffdle-screenshot.jpg"
+      summary: "Wordle for music: listen to the riff, play it back on the keyboard, and get clues on each note."
+    - title: "Source code"
+      url: "https://github.com/KarlHajal/synthia"
+      summary: "The SYNTHIA app on GitHub, built with Karl El Hajal."
