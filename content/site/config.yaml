@@ -18,7 +18,7 @@ site:
     dark_filter: "grayscale(1) contrast(1.1)"                    # black and white at night
     dark_overlay:
       src: "content/site/sunglasses.png"
-      left: "23.7%"     # position and width as % of the photo, lined up with the eyes
+      left: "21.7%"     # position and width as % of the photo, lined up with the eyes
       top: "33.4%"
       width: "64%"
       rotate: "0deg"
