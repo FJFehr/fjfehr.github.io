@@ -2,11 +2,11 @@
 # YouTube videos and media appearances
 # Displayed on the homepage in the Highlights section
 
-- id: 1
-  title: "2025 SYNTH*IA* - The first AI band member that JAMS with you!"
-  video_id: "Vhwi-pR9_wg"
-  timestamp: 0
-  description: "Winners of Idiap Create Challenge 2025. The first AI band member that JAMS with you. Powered by a custom generative *AI* MIDI model, it is fast, creative, and easy to use!"
+# - id: 1
+#   title: "2025 SYNTH*IA* - The first AI band member that JAMS with you!"
+#   video_id: "Vhwi-pR9_wg"
+#   timestamp: 0
+#   description: "Winners of Idiap Create Challenge 2025. The first AI band member that JAMS with you. Powered by a custom generative *AI* MIDI model, it is fast, creative, and easy to use!"
 
 - id: 2
   title: "2025 PhD Defence"
