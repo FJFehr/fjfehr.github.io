@@ -11,7 +11,6 @@ site:
   nationality_flags: "🇿🇦 🇨🇭"  # Optional: displayed under profile picture
   author_name_pattern: "F. Fehr"  # Pattern to bold in publication author lists
   google_scholar_url: "https://scholar.google.com/citations?user=WaZWY0wAAAAJ&hl=en"
-  cv_path: "content/site/Fabio_J_Fehr_CV_2025.pdf"  # Path to CV/Resume PDF
   profile_picture_path: "content/site/profile_picture.jpg"  # Path to profile picture
   site_url: "https://fjfehr.github.io"  # Your GitHub Pages URL — no trailing slash (used for OG tags in blog posts)
   role:
@@ -32,9 +31,6 @@ layout:
         href: "#publications-heading"
       - label: "Blog"
         href: "#blog-heading"
-      - label: "CV"
-        href: "{{cv_path}}"
-        is_external: true
   
   sections:
     timeline:
