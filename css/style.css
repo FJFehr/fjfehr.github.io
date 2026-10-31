@@ -520,6 +520,13 @@ html[data-theme="dark"] .theme-toggle:hover {
   border: none;
 }
 
+/* Vertical videos (YouTube Shorts, `vertical: true`): 9:16 player centred in the 16:9 frame,
+   so every card keeps the same height. 9/16 of the frame height = 31.64% of its width. */
+.media-thumbnail.vertical iframe {
+  width: 31.64%;
+  left: 34.18%;
+}
+
 .media-info {
   padding: 16px;
 }

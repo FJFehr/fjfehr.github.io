@@ -340,7 +340,7 @@ async function loadMedia() {
             
             return `
             <div class="media-item">
-                <div class="media-thumbnail">
+                <div class="media-thumbnail${item.vertical ? ' vertical' : ''}">
                     <iframe 
                         src="${videoUrl}" 
                         title="${item.title}"
