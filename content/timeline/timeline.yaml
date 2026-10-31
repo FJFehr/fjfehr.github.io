@@ -22,16 +22,16 @@
   start_date: "2026-01"
   end_date: "2026-09"
   description: |
-    **Postdoctoral Researcher (9 months)** at the [University of Oxford](https://eng.ox.ac.uk/) in the [Torr Vision Group](https://torrvision.com/). My research focused on trustworthy AI and evaluation in high-stakes domains, alongside foundational machine learning. I explored weight-space learning with hypernetworks, generating neural networks directly from examples; legal AI, investigating legal reasoning through annotation and evidence grounding; and medical AI, revealing limitations of rubric-based evaluations in assessing hallucinations.
+    **Postdoctoral Researcher (9 months)** in the [Torr Vision Group](https://torrvision.com/). Researched trustworthy AI in high-stakes domains and foundational machine learning, spanning weight-space learning with hypernetworks to generate neural networks directly from examples; legal reasoning through annotation and evidence grounding; and medical AI, exposing limitations of rubric-based evaluations in assessing hallucinations.
 
-    Led legal and medical AI research projects at [OXAI](https://www.oxai.org/), mentoring teams through to publication. Organised the inaugural [AI4Law workshop at ICML 2026](https://sites.google.com/view/ai4law-icml2026), bringing together the legal AI research community. Lectured in Advanced AI at [Lady Margaret Hall](https://www.lmh.ox.ac.uk/study-here/lmh-summer-programmes/courses-and-dates/advanced-artificial-intelligence-and-machine-learning-computer-vision). Member of [Wolfson College](https://www.wolfson.ox.ac.uk/) and active in Oxford's Surf and Kitesurfing Clubs.
+    Led legal and medical AI research projects at [OXAI](https://www.oxai.org/), mentoring teams through to publication. Organised the inaugural [AI4Law workshop at ICML 2026](https://sites.google.com/view/ai4law-icml2026) and lectured in Advanced AI at [Lady Margaret Hall](https://www.lmh.ox.ac.uk/study-here/lmh-summer-programmes/courses-and-dates/advanced-artificial-intelligence-and-machine-learning-computer-vision). Member of [Wolfson College](https://www.wolfson.ox.ac.uk/) and active in Oxford's Surf and Kitesurfing Clubs.
 
     *Publications (3 last-author, 1 first-author):*
 
-    - [On-the-fly Weight Generation: A Hypernetwork Proof of Concept on ARC-1D](https://arxiv.org/abs/2610.00820) - NeurIPS 2026 Workshop (🔦 Spotlight)
-    - [When Rubrics Fail: Hallucinations Reveal Blind Spots in Medical AI Evaluation](https://arxiv.org/abs/2609.12718) - NeurIPS 2026 GenAI4Health (under review)
-    - [Building Legal Reward Models for Grounding and Abstention](https://arxiv.org/abs/2609.14739) - ICML 2026 AI4Law (under review)
-    - [AnnoCaseLaw: Legal Annotation Benchmark of Civil Negligence](https://arxiv.org/abs/2503.00128) (under review)
+    - [On-the-fly Weight Generation: A Hypernetwork Proof of Concept on ARC-1D](https://arxiv.org/abs/2610.00820) — NeurIPS 2026 Workshop (🔦 Spotlight)
+    - [When Rubrics Fail: Hallucinations Reveal Blind Spots in Medical AI Evaluation](https://arxiv.org/abs/2609.12718) — NeurIPS 2026 GenAI4Health (Workshop publication; under review)
+    - [Building Legal Reward Models for Grounding and Abstention](https://arxiv.org/abs/2609.14739) — ICML 2026 AI4Law (Workshop publication; under review)
+    - [AnnoCaseLaw: Legal Annotation Benchmark of Civil Negligence](https://arxiv.org/abs/2503.00128) — Under review
 
     *Supervisor:* [Prof. Philip Torr](https://scholar.google.com/citations?user=kPxa2w0AAAAJ&hl=en).
   logo: "content/timeline/logos/oxford.svg"
