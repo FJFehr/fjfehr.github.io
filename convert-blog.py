@@ -2,14 +2,13 @@
 """
 Blog Post Converter for GitHub Pages
 
-This script converts markdown blog posts to JSON and HTML format for use with GitHub Pages.
-It extracts YAML frontmatter, processes markdown content, generates structured JSON files,
-and creates individual HTML pages with Open Graph tags for social media sharing.
+This script converts markdown blog posts into standalone HTML pages for GitHub Pages.
+It extracts YAML frontmatter, embeds the markdown content in each page, adds Open Graph
+tags for social media sharing, and maintains the blogs.yaml index.
 
 Key Features:
 - Extracts YAML frontmatter (title, date, excerpt, thumbnail)
 - Generates unique blog IDs from title and date
-- Creates individual JSON files for each blog post
 - Creates individual HTML files with Open Graph meta tags
 - Maintains a master blogs.yaml index file
 - Handles batch conversion of all markdown files
@@ -44,7 +43,6 @@ except ImportError:
 # Configuration constants
 DEFAULT_BLOGS_DIR = "blogs"
 DEFAULT_POSTS_DIR = "blogs/posts"
-DEFAULT_EXCERPT_LENGTH = 200
 BLOG_INDEX_FILENAME = "blogs.yaml"
 SITE_CONFIG_PATH = "content/site/config.yaml"
 
@@ -155,42 +153,6 @@ def calculate_reading_time(content, wpm=200):
     return f"{minutes} min read"
 
 
-def clean_text_for_excerpt(raw_content, max_length=DEFAULT_EXCERPT_LENGTH):
-    """
-    Extract a clean, readable excerpt from markdown content.
-
-    This function removes all markdown formatting and HTML tags to create
-    a plain text excerpt suitable for previews and meta descriptions.
-
-    Args:
-        raw_content (str): Raw markdown content
-        max_length (int): Maximum length of the excerpt in characters
-
-    Returns:
-        str: Clean text excerpt, truncated to max_length if necessary
-    """
-    # Remove HTML tags
-    clean_text = re.sub(r"<[^>]+>", "", raw_content)
-
-    # Remove markdown formatting
-    clean_text = re.sub(r"\*\*([^*]+)\*\*", r"\1", clean_text)  # Bold
-    clean_text = re.sub(r"\*([^*]+)\*", r"\1", clean_text)  # Italic
-    clean_text = re.sub(r"##?\s+", "", clean_text)  # Headings
-    clean_text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", clean_text)  # Links
-
-    # Get first paragraph or sentence
-    paragraphs = clean_text.split("\n\n")
-    first_paragraph = paragraphs[0].strip()
-
-    # Truncate to max_length if needed
-    if len(first_paragraph) <= max_length:
-        return first_paragraph
-    else:
-        # Truncate at word boundary to avoid cutting words
-        truncated = first_paragraph[:max_length].rsplit(" ", 1)[0]
-        return truncated + "..."
-
-
 def generate_blog_html(blog_metadata, blog_content, output_directory=DEFAULT_BLOGS_DIR):
     """
     Generate a standalone HTML file for a blog post with proper OG tags and embedded content.
@@ -292,24 +254,22 @@ def generate_blog_html(blog_metadata, blog_content, output_directory=DEFAULT_BLO
 
 def convert_markdown_to_json(markdown_file_path, output_directory=None):
     """
-    Convert a single markdown file to JSON format for GitHub Pages.
+    Convert a single markdown file to a standalone HTML page for GitHub Pages.
 
     This function:
     1. Reads the markdown file
     2. Extracts YAML frontmatter (title, date, etc.)
     3. Processes the content
     4. Generates a unique blog ID
-    5. Creates a JSON file with the blog data
-    6. Generates a standalone HTML file with OG tags
-    7. Returns metadata for the blogs index
+    5. Generates a standalone HTML file with OG tags and embedded content
+    6. Returns metadata for the blogs index
 
     Args:
         markdown_file_path (str): Path to the markdown file to convert
-        output_directory (str, optional): Directory to save JSON file.
-                                        Defaults to same directory as markdown file.
+        output_directory (str, optional): Unused; HTML is always written to blogs/.
 
     Returns:
-        dict or None: Blog metadata dictionary for blogs.json index,
+        dict or None: Blog metadata dictionary for the blogs.yaml index,
                      or None if conversion failed
     """
     input_path = Path(markdown_file_path)
@@ -329,12 +289,6 @@ def convert_markdown_to_json(markdown_file_path, output_directory=None):
 
     # Parse frontmatter and content
     frontmatter_data, markdown_content = parse_yaml_frontmatter(raw_content)
-
-    # Determine output directory
-    if output_directory is None:
-        output_path = input_path.parent
-    else:
-        output_path = Path(output_directory)
 
     # Extract or generate blog metadata
     post_title = frontmatter_data.get(
@@ -385,7 +339,7 @@ def update_blogs_index_file(new_blog_metadata, index_file_path=None):
     Args:
         new_blog_metadata (dict): Blog metadata to add/update
         index_file_path (str, optional): Path to blogs.yaml.
-                                       Defaults to "content/blogs/blogs.yaml"
+                                       Defaults to "blogs/blogs.yaml"
     """
     if index_file_path is None:
         index_file_path = f"{DEFAULT_BLOGS_DIR}/{BLOG_INDEX_FILENAME}"
@@ -440,10 +394,10 @@ def update_blogs_index_file(new_blog_metadata, index_file_path=None):
 
 def batch_convert_all_markdown_files(posts_directory=DEFAULT_POSTS_DIR):
     """
-    Convert all markdown files in a directory to JSON format.
+    Convert all markdown files in a directory to HTML pages.
 
     This function finds all .md files in the specified directory,
-    converts them to JSON, and creates a comprehensive blogs.yaml index.
+    converts them to HTML, and creates a comprehensive blogs.yaml index.
 
     Args:
         posts_directory (str): Directory containing markdown blog files

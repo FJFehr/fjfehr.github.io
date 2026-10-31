@@ -90,13 +90,7 @@
      */
     async function loadYaml(path) {
         try {
-            // If we're in a blog post (has BLOG_POST_ID) and path starts with 'blogs/',
-            // the path is already correct (we're in blogs/ directory)
-            let adjustedPath = path;
-            if (window.BLOG_POST_ID && path.startsWith('blogs/')) {
-                adjustedPath = path.substring('blogs/'.length);
-            }
-            const response = await fetch(adjustedPath);
+            const response = await fetch(path);
             const yamlText = await response.text();
             return jsyaml.load(yamlText);
         } catch (error) {
@@ -692,49 +686,6 @@ async function loadBlogs() {
 }
 
 /**
- * Load design configuration and apply CSS custom properties
- * Sets layout variables, typography, and image sizing from design.json
- */
-async function loadDesignConfiguration() {
-    try {
-        const response = await fetch('content/site/design.json');
-        if (!response.ok) return;
-        const config = await response.json();
-        
-        // Layout variables
-        if (config.layout?.maxWidth) {
-            const value = config.layout.maxWidth.value;
-            const unit = config.layout.maxWidth.unit || 'px';
-            document.documentElement.style.setProperty('--maxw', value + unit);
-        }
-        
-        // Typography variables
-        if (config.typography?.body?.lineHeight) {
-            document.documentElement.style.setProperty(
-                '--body-line-height', 
-                config.typography.body.lineHeight.value
-            );
-        }
-        
-        // Image variables
-        const pubThumbnail = config.images?.publicationThumbnail;
-        if (pubThumbnail) {
-            const width = pubThumbnail.width?.value;
-            const widthUnit = pubThumbnail.width?.unit || 'px';
-            const height = pubThumbnail.height?.value;
-            const heightUnit = pubThumbnail.height?.unit || 'px';
-            const borderRadius = pubThumbnail.borderRadius || '4px';
-            
-            if (width) document.documentElement.style.setProperty('--pub-thumb-width', width + widthUnit);
-            if (height) document.documentElement.style.setProperty('--pub-thumb-height', height + heightUnit);
-            document.documentElement.style.setProperty('--pub-thumb-radius', borderRadius);
-        }
-    } catch (error) {
-        console.error('Error loading design configuration:', error);
-    }
-}
-
-/**
  * Initialize main page
  * Loads all content sections in the correct order
  */
@@ -778,7 +729,6 @@ function initializeMainPage() {
     // Load configurations first so CSS variables are available
     loadLayoutConfiguration();
     loadSiteMetadata();
-    loadDesignConfiguration();
 
     // Load content
     loadProfileContent();
@@ -851,14 +801,8 @@ async function loadBlogLayoutConfiguration() {
  */
 async function loadBlogPost() {
     try {
-        // Get blog ID from window variable (for individual blog HTML files) or URL query parameter
-        let blogId = window.BLOG_POST_ID || null;
-        
-        if (!blogId) {
-            const urlParams = new URLSearchParams(window.location.search);
-            blogId = urlParams.get('id');
-        }
-        
+        // Set by convert-blog.py in each generated blogs/<id>.html page
+        const blogId = window.BLOG_POST_ID;
         const blogBodyElement = document.getElementById('blog-body');
         
         if (!blogId) {
@@ -868,11 +812,8 @@ async function loadBlogPost() {
             return;
         }
         
-        // Determine the correct path to blogs.yaml based on current location
-        const blogsYamlPath = window.BLOG_POST_ID ? 'blogs.yaml' : 'blogs/blogs.yaml';
-        
-        // Load blogs.yaml to find the content file
-        const blogs = await loadYaml(blogsYamlPath);
+        // Blog pages live in blogs/, next to blogs.yaml
+        const blogs = await loadYaml('blogs.yaml');
         
         const blog = blogs?.find(b => b.id === blogId);
         
@@ -903,48 +844,10 @@ async function loadBlogPost() {
             dateElement.textContent = formatDate(blog.date) + (readingTime ? ' · ' + readingTime : '');
         }
         
-        // Load and parse content
-        let htmlContent;
-        
-        // Check if we have embedded blog data (new format)
-        if (window.BLOG_POST_DATA) {
-            htmlContent = parseMarkdown(window.BLOG_POST_DATA.content);
-        } else if (blog.content_file) {
-            // Legacy: Load from separate JSON file
-            let contentPath = blog.content_file;
-            if (window.BLOG_POST_ID) {
-                contentPath = blog.content_file.replace('blogs/', '');
-            }
-            
-            const contentResponse = await fetch(contentPath);
-            const contentData = await contentResponse.json();
-            htmlContent = parseMarkdown(contentData.content);
-        } else if (blog.markdown_file) {
-            // Legacy: Load markdown file (for backward compatibility)
-            const markdownResponse = await fetch(blog.markdown_file);
-            const markdownText = await markdownResponse.text();
-            htmlContent = parseMarkdown(markdownText);
-        } else {
-            throw new Error('No content available');
-        }
-        
+        // Content is embedded in the page by convert-blog.py
+        if (!window.BLOG_POST_DATA) throw new Error('No content available');
         if (blogBodyElement) {
-            blogBodyElement.innerHTML = htmlContent;
-            
-            // Fix relative image paths for blog content
-            // Images in markdown are relative to blogs/ directory
-            const images = blogBodyElement.querySelectorAll('img');
-            images.forEach(img => {
-                const src = img.getAttribute('src');
-                // Only fix relative paths that don't already start with http or /
-                if (src && !src.startsWith('http') && !src.startsWith('/')) {
-                    // If we're in a blog HTML file (has BLOG_POST_ID), paths are already relative to blogs/
-                    // If we're not, we need to prepend the path
-                    if (!window.BLOG_POST_ID && !src.includes('blogs/')) {
-                        img.setAttribute('src', `blogs/${src}`);
-                    }
-                }
-            });
+            blogBodyElement.innerHTML = parseMarkdown(window.BLOG_POST_DATA.content);
         }
         
         // Generate table of contents
