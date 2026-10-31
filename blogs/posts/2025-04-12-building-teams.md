@@ -4,7 +4,7 @@ date: 2026-04-12
 excerpt: "Part 3 of the PhD survival series. PhDoing: A PhD is designed to be individual, but the work that compounds is often collaborative. The best work comes from the best teams. But how do we build them? It is about culture, good engineering, small teams, clear ownership, scaling structure as you go."
 thumbnail: "blogs/images/idiap/justiceLeagueNVIB_compressed.png"
 short_title: 'Building Teams'
-permalink: /fablogio/collaborations/
+id: building-teams-2026
 # hidden: true
 ---
 

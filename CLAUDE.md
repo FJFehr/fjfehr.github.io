@@ -13,7 +13,7 @@ Personal portfolio and blog hosted on GitHub Pages. No build tools, bundlers, or
 **Adding a blog post:**
 1. Create `blogs/posts/<slug>.md` with YAML frontmatter:
    - Required: `title`, `date` (YYYY-MM-DD), `excerpt`, `thumbnail`
-   - Optional: `short_title` (card display), `permalink` (custom URL slug)
+   - Optional: `short_title` (card display), `id` (pins the URL slug and like-count key; set it once a post is shared so title edits do not change the URL)
 2. Run: `python3 convert-blog.py blogs/posts/<slug>.md --update-index`
    - Requires: `pip install pyyaml`
    - Creates `blogs/<slug>.html` and updates `blogs/blogs.yaml`

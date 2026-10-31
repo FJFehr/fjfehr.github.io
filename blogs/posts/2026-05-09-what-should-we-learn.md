@@ -4,7 +4,7 @@ date: 2026-05-09
 excerpt: "As AI reshapes work, education and the skills society values, the old question of what to learn becomes harder to answer. The future may not belong only to specialists, but to people who can learn broadly, transfer ideas and develop a full range of human intelligences: creative, linguistic, embodied, analytical and relational."
 thumbnail: "blogs/images/renaissance/leonardo.jpg"
 short_title: 'What Should We Learn?'
-permalink: /fablogio/generalist/
+id: the-return-of-the-renaissance-generalist-2026
 hidden: false
 ---
 

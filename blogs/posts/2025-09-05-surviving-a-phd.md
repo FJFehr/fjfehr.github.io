@@ -4,7 +4,7 @@ date: 2025-09-05
 excerpt: "A personal survival guide for a PhD in Machine Learning at EPFL, Idiap, and Martigny"
 thumbnail: "blogs/images/idiap/Fabio-Jamie.jpeg"
 short_title: 'A PhD Survival Guide'
-permalink: /fablogio/surviving-a-phd/
+id: a-phd-survival-guide-2025-epfl-idiap-and-martigny-2025
 hidden: true
 ---
 

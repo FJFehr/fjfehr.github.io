@@ -63,7 +63,7 @@ This replaces all personal data with blank starter templates and clears blog pos
    excerpt: "A brief description for social media previews (WhatsApp, LinkedIn, etc.)"
    thumbnail: "blogs/images/my-image.jpg"
    short_title: "Short card title"    # optional – shorter title for blog cards
-   permalink: "custom-url-slug"       # optional – overrides auto-generated URL slug
+   id: "custom-url-slug"              # optional – pins the URL slug (default: from title + year); keep it once a post is shared
    ---
    
    ## Introduction

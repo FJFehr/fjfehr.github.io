@@ -4,7 +4,7 @@ date: 2026-03-15
 excerpt: "Part 2 of the PhD survival series. PhDying: Research is not only about writing papers. It is about developing a palate for problems, explaining ideas clearly, strategic publishing for your PhD and connecting it together into a coherent thesis."
 thumbnail: "blogs/images/idiap/palate_of_problems.png"
 short_title: 'Research Writing'
-permalink: /fablogio/paper-writing/
+id: research-writing-2026
 ---
 
 **TL;DR** Research writing is not only about papers. It starts with developing a palate for important problems, then explaining ideas clearly. During a PhD it also requires a practical publishing strategy, and eventually a thesis that connects the larger story of your work.

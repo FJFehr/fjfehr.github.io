@@ -8,7 +8,7 @@ tags for social media sharing, and maintains the blogs.yaml index.
 
 Key Features:
 - Extracts YAML frontmatter (title, date, excerpt, thumbnail)
-- Generates unique blog IDs from title and date
+- Uses the `id` frontmatter field as the URL slug, or generates one from title and date
 - Creates individual HTML files with Open Graph meta tags
 - Maintains a master blogs.yaml index file
 - Handles batch conversion of all markdown files
@@ -299,7 +299,8 @@ def convert_markdown_to_json(markdown_file_path, output_directory=None):
     post_thumbnail = frontmatter_data.get("thumbnail", "")
     post_short_title = frontmatter_data.get("short_title", "")
     post_hidden = frontmatter_data.get("hidden", "")
-    unique_blog_id = create_blog_id(post_title, post_date)
+    # A pinned id keeps the URL (and like count) stable when the title is edited
+    unique_blog_id = frontmatter_data.get("id") or create_blog_id(post_title, post_date)
 
     # Return metadata for blogs index
     blog_metadata = {

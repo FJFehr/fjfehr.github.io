@@ -4,7 +4,7 @@ date: 2025-02-25
 short_title: 'Amazon Berlin Internship'
 excerpt: "My time living in Berlin and working with Amazon was tough but really fulfilling and rewarding. I have a huge appreciation for the team for the opportunity!"
 thumbnail: "blogs/images/berlin/wall.jpeg"
-permalink: /fablogio/research-internship-at-amazon-berlin/
+id: interning-at-amazon-berlin-2024-the-grind-growth-and-gratitude-2025
 ---
 
 <figure>

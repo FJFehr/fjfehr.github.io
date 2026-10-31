@@ -4,7 +4,7 @@ date: 2026-03-08
 excerpt: "Part 1 of the PhD survival series. PhDeciding: Choosing a PhD is not just about the topic. It is about why you are doing it, who you work with, where you live, and what problem you commit to."
 thumbnail: "blogs/images/idiap/goldencircle_phd.jpeg"
 short_title: 'Four Decisions for PhD'
-permalink: /fablogio/four-decisions-that-shape-your-phd/
+id: four-decisions-that-shape-your-phd-2026
 ---
 
 **TL;DR** A PhD is shaped by four decisions: **why** you are doing it, **whom** you work with, **where** you live, and **what** problem you want to solve. The order matters. Start with your purpose. Then choose your mentor and environment carefully. Finally pick a topic that excites you and realistic in your lab.
