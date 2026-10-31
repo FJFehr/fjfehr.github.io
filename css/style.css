@@ -52,6 +52,7 @@ html[data-theme="light"] {
   --hover-bg:   var(--palette-light-hover); /* Brand  — hover fill for cards, nav items */
   --accent-color: #C9A227;    /* Accent — gold, publication action buttons */
   --accent-hover: #EFE3BE;
+  --highlight-color: #A54C44; /* Highlight — brick red, venue tags (deepened from #B2524A for AA on hover) */
 }
 
 /* Dark theme */
@@ -65,6 +66,7 @@ html[data-theme="dark"] {
   --hover-bg:   var(--palette-dark-hover);  /* Brand  — hover fill for cards, nav items */
   --accent-color: #D6B95D;    /* Accent — gold, brightened for dark bg */
   --accent-hover: #332C1A;
+  --highlight-color: #D5A09B; /* Highlight — brick red, lightened for dark bg */
 }
 
 
@@ -636,7 +638,7 @@ html[data-theme="dark"] .pub-image .img-dark {
 }
 
 .pub-conference {
-  color: var(--link-color);
+  color: var(--highlight-color);
 }
 
 /* Publication action buttons */
