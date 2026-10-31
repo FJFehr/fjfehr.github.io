@@ -1,6 +1,50 @@
 # Publications List
 # Displayed on the homepage in the Publications section
 
+- id: 6
+  title: "On-the-fly Weight Generation: A Hypernetwork Proof of Concept on ARC-1D"
+  authors: "F. Fehr, P. Torr"
+  venue: "NeurIPS 2026 Workshop on Neural Network Artifacts as a New Data Modality"
+  conference: "NeurIPS 2026 Workshop (🔦 Spotlight)"
+  paper: "https://arxiv.org/abs/2610.00820"
+  website: "https://fjfehr.github.io/on-the-fly/"
+  code: "https://github.com/FJFehr/on-the-fly-models"
+  image: "content/publications/files/on-the-fly.png"
+  image_dark: "content/publications/files/on-the-fly-dark.png"
+
+- id: 7
+  title: "When Rubrics Fail: Hallucinations Reveal Blind Spots in Medical AI Evaluation"
+  authors: "G. Farrow, L. S. Li, J. Johnson, T. Wang, P. Torr, W. Bolton, F. Fehr"
+  venue: "NeurIPS 2026 Workshop on GenAI for Health"
+  conference: "NeurIPS 2026 Workshop · under review"
+  paper: "https://arxiv.org/abs/2609.12718"
+  website: "https://fjfehr.github.io/when-rubrics-fail/"
+  code: "https://github.com/lilysli/when-rubrics-fail"
+  dataset: "https://huggingface.co/datasets/JackJ3636/when-rubrics-fail"
+  image: "content/publications/files/when-rubrics-fail.png"
+
+- id: 8
+  title: "Building Legal Reward Models for Grounding and Abstention"
+  authors: "R. Franzone, V. Noël, P. Wang, P. Torr, F. Fehr"
+  venue: "ICML 2026 Workshop on AI for Law"
+  conference: "ICML 2026 Workshop · under review"
+  paper: "https://arxiv.org/abs/2609.14739"
+  website: "https://fjfehr.github.io/legal-reward-bench/"
+  code: "https://github.com/oxai/legal-reward-bench"
+  dataset: "https://huggingface.co/datasets/riltonfranzone/legal-reward-bench"
+  image: "content/publications/files/legal-reward-bench.png"
+  image_dark: "content/publications/files/legal-reward-bench-dark.png"
+
+- id: 9
+  title: "AnnoCaseLaw: Legal Annotation Benchmark of Civil Negligence"
+  authors: "R. Franzone*, M. Sesodia*, A. Petrova, J. Armour, T. Lukasiewicz, O.-M. Camburu, P. K. Dokania, P. Torr, C. Schroeder de Witt†, F. Fehr†"
+  venue: "arXiv preprint"
+  conference: "Under review"
+  paper: "https://arxiv.org/abs/2503.00128"
+  code: "https://github.com/oxai/annocaselaw"
+  dataset: "https://huggingface.co/datasets/riltonfranzone/annocaselaw"
+  image: "content/publications/files/annocaselaw.png"
+
 - id: 1
   title: "CoRet: Improved Retriever for Code Editing"
   authors: "F. Fehr, P. T. Sivaprasad, L. Franceschi, G. Zappella"
