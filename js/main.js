@@ -397,6 +397,26 @@ async function loadSiteMetadata() {
             profileImgElement.src = config.site.profile_picture_path;
         }
 
+        // Optional photo effects: theme filters (read by CSS) and a dark-mode overlay
+        const effects = config.site?.profile_picture_effects;
+        const profilePhoto = document.getElementById('profile-photo');
+        if (profilePhoto && effects) {
+            if (effects.light_filter) profilePhoto.style.setProperty('--photo-filter-light', effects.light_filter);
+            if (effects.dark_filter) profilePhoto.style.setProperty('--photo-filter-dark', effects.dark_filter);
+            const overlay = effects.dark_overlay;
+            if (overlay?.src) {
+                const img = document.createElement('img');
+                img.className = 'profile-overlay';
+                img.src = overlay.src;
+                img.alt = '';
+                img.style.left = overlay.left || '0';
+                img.style.top = overlay.top || '0';
+                img.style.width = overlay.width || '100%';
+                img.style.setProperty('--overlay-rotate', overlay.rotate || '0deg');
+                profilePhoto.appendChild(img);
+            }
+        }
+
         // Update nationality flags (optional)
         const nationalityFlagsElement = document.getElementById('nationality-flags');
         if (nationalityFlagsElement && config.site?.nationality_flags) {

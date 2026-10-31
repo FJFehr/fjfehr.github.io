@@ -223,6 +223,45 @@ html[data-theme="dark"] .theme-toggle:hover {
   object-fit: cover;
 }
 
+/* Circular clip so the dark-mode overlay can slide in from above the photo */
+.profile-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.profile-photo #profile-img {
+  display: block;
+  filter: var(--photo-filter-light, none);
+  transition: filter 1s ease;
+}
+
+[data-theme="dark"] .profile-photo #profile-img {
+  filter: var(--photo-filter-dark, none);
+}
+
+.profile-image .profile-overlay {
+  position: absolute;
+  height: auto;
+  border-radius: 0;
+  image-rendering: pixelated;
+  pointer-events: none;
+  /* parked above the photo; % of its own height, enough to clear the circle */
+  transform: translateY(-800%) rotate(var(--overlay-rotate));
+  transition: transform 1.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+[data-theme="dark"] .profile-image .profile-overlay {
+  transform: translateY(0) rotate(var(--overlay-rotate));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-image .profile-overlay,
+  .profile-photo #profile-img {
+    transition: none;
+  }
+}
+
 .nationality-flags {
   font-size: 14px;
   text-align: center;

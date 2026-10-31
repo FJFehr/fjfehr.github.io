@@ -13,6 +13,16 @@ site:
   google_scholar_url: ""       # https://scholar.google.com/citations?user=YOUR_ID&hl=en
   cv_path: ""                  # Path to your CV/Resume PDF (e.g. "content/site/YOUR_CV.pdf")
   profile_picture_path: "content/site/profile_picture.jpg"  # Path to your profile picture
+  # Optional: per-theme CSS filters on the photo, and an image that slides onto it in dark mode
+  # profile_picture_effects:
+  #   light_filter: "sepia(0.25) saturate(1.3) brightness(1.08)"
+  #   dark_filter: "grayscale(1)"
+  #   dark_overlay:
+  #     src: "content/site/sunglasses.png"
+  #     left: "32%"      # position and width as % of the photo
+  #     top: "35%"
+  #     width: "43%"
+  #     rotate: "0deg"
   site_url: "https://YOUR_USERNAME.github.io"  # Your GitHub Pages URL — no trailing slash (used for OG tags in blog posts)
   role:
     title: "YOUR_ROLE"         # e.g. "PhD Student", "Software Engineer"
