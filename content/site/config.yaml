@@ -18,10 +18,10 @@ site:
     dark_filter: "grayscale(1) contrast(1.1)"                    # black and white at night
     dark_overlay:
       src: "content/site/sunglasses.png"
-      left: "31.8%"     # position and width as % of the photo, lined up with the eyes
-      top: "34.6%"
-      width: "43.2%"
-      rotate: "-3.5deg"
+      left: "28.3%"     # position and width as % of the photo, lined up with the eyes
+      top: "34.3%"
+      width: "52%"
+      rotate: "0deg"
   site_url: "https://fjfehr.github.io"  # Your GitHub Pages URL — no trailing slash (used for OG tags in blog posts)
   role:
     title: "AI Research Scientist"
