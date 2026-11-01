@@ -12,6 +12,7 @@
   end_date: "present"
   description: "**AI Research Scientist** at [Cohere](https://cohere.com/) · [Aleph Alpha](https://aleph-alpha.com/), working on the [OpenEuroLLM](https://openeurollm.eu/) project and evaluations."
   logo: "content/timeline/logos/aleph-alpha-cohere.svg"
+  logo_dark: "content/timeline/logos/aleph-alpha-cohere-dark.svg"
 
 - id: "oxford"
   type: "work"
@@ -22,9 +23,9 @@
   start_date: "2026-01"
   end_date: "2026-09"
   description: |
-    **Postdoctoral Researcher (9 months)** in the [Torr Vision Group](https://torrvision.com/). Researched trustworthy AI in high-stakes domains and foundational machine learning, spanning weight-space learning with hypernetworks to generate neural networks directly from examples; evidence-grounded legal reasoning and reward modelling; legal reasoning annotation and the application of law to facts; and medical AI, where hallucinations reveal blind spots in rubric-based evaluation.
+    **Postdoctoral Researcher (9 months)** in the [Torr Vision Group](https://torrvision.com/). Researched trustworthy AI in high-stakes domains and foundational machine learning, spanning weight-space learning with hypernetworks to generate neural networks directly from examples; evidence-grounded legal reasoning and reward modelling; legal reasoning annotation and the application of law to facts; and medical AI, where hallucinations reveal blind spots in rubric-based evaluation. Contributed to grant writing and review across AI reasoning, multimodal pre-training, and foundational AI.
 
-    Committee Member and Research Lead at [OXAI](https://www.oxai.org/), leading legal and medical AI research projects and mentoring teams through to publication. Co-organised [AI4Law at ICML 2026](https://sites.google.com/view/ai4law-icml2026), the first dedicated legal AI workshop at a major machine learning conference. Guest speaker at Hack the Law Cambridge, presenting [Towards Grounded Legal AI](https://hackthelaw.notion.site/Towards-Grounded-Legal-AI-363c01c241b280b1ad10c566bb1e094e), and recorded an episode of [Monday Bagel](https://open.spotify.com/show/6mRDLaMeObgfpaX8iAB8kQ) ([YouTube](https://www.youtube.com/@mjackowski)) with Prof. Michał Jackowski on legal AI reliability. Lectured in Advanced AI at [Lady Margaret Hall](https://www.lmh.ox.ac.uk/study-here/lmh-summer-programmes/courses-and-dates/advanced-artificial-intelligence-and-machine-learning-computer-vision). Member of [Wolfson College](https://www.wolfson.ox.ac.uk/) and active in Oxford's Surf and Kitesurfing Clubs.
+    Committee Member and Research Lead at [OXAI](https://www.oxai.org/), leading legal and medical AI research projects and mentoring teams through to publication. Co-organised [AI4Law at ICML 2026](https://sites.google.com/view/ai4law-icml2026), the first dedicated legal AI workshop at a major machine learning conference. Guest speaker at Hack the Law Cambridge, presenting [Towards Grounded Legal AI](https://hackthelaw.notion.site/Towards-Grounded-Legal-AI-363c01c241b280b1ad10c566bb1e094e), and recorded an episode of the [Monday Bagel podcast](https://open.spotify.com/show/6mRDLaMeObgfpaX8iAB8kQ) ([YouTube](https://www.youtube.com/@mjackowski)) with Prof. Michał Jackowski on legal AI reliability. Lectured in Advanced AI at [Lady Margaret Hall](https://www.lmh.ox.ac.uk/study-here/lmh-summer-programmes/courses-and-dates/advanced-artificial-intelligence-and-machine-learning-computer-vision). Member of [Wolfson College](https://www.wolfson.ox.ac.uk/) and active in Oxford's Surf and Kitesurfing Clubs.
 
     *Publications (3 last-author, 1 first-author):*
 
@@ -45,7 +46,7 @@
   start_date: "2024-07"
   end_date: "2024-12"
   description: |
-    **Applied Data Scientist Internship** at [Amazon](https://www.amazon.science/). Focused on enhancing retrieval in the Retrieval Augmented Generation (RAG) pipeline for code generation using Large Language Models (LLMs). Designed and trained a lightweight retrieval model that integrated code semantics with dense embeddings, file directory hierarchy, and call graph structure.
+    **Applied Data Scientist Internship (6 months)** at [Amazon](https://www.amazon.science/). Focused on enhancing retrieval in the Retrieval Augmented Generation (RAG) pipeline for code generation using Large Language Models (LLMs). Designed and trained a lightweight retrieval model that integrated code semantics with dense embeddings, file directory hierarchy, and call graph structure.
 
     *Publication:* [CoRet: Improved Retriever for Code Editing](https://aclanthology.org/2025.acl-short.62/) - ACL 2025.
   logo: "content/timeline/logos/Amazon.svg"
@@ -64,7 +65,8 @@
     *Thesis:* [Nonparametric Variational Information Bottleneck: Attention-based Architectures as Latent Variable Models](https://infoscience.epfl.ch/entities/publication/dad86ab3-09eb-48bf-b6d4-8c3d903eb94d)
 
     *Supervisor:* [Dr. James Henderson](https://scholar.google.com/citations?user=CSib0ooAAAAJ&hl=en).
-  logo: "content/timeline/logos/EPFL.svg"
+  logo: "content/timeline/logos/EPFL-idiap.svg"
+  logo_dark: "content/timeline/logos/EPFL-idiap-dark.svg"
 
 - id: "uct-msc"
   type: "education"

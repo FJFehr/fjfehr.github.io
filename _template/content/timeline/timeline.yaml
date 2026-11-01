@@ -13,6 +13,7 @@
 #   end_date     (required) — YYYY-MM format or "present"
 #   description  (optional) — markdown-supported description
 #   logo         (optional) — path to logo image (SVG or PNG in content/timeline/logos/)
+#   logo_dark    (optional) — logo variant shown in dark mode (e.g. dark text made white)
 
 # Example:
 # - id: "my-job"
