@@ -779,8 +779,9 @@ html.has-hero-bg .profile-role {
   display: block;
 }
 
-/* Optional dark-mode images (image_dark in publications.yaml, logo_dark in timeline.yaml) */
-.img-dark,
+/* Optional dark-mode images (image_dark in publications.yaml, logo_dark in timeline.yaml).
+   html:not(...) keeps the hide rule stronger than component rules like .pub-image img { display: block } */
+html:not([data-theme="dark"]) .img-dark,
 html[data-theme="dark"] .img-light {
   display: none;
 }
