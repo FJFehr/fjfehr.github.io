@@ -23,8 +23,11 @@ Examples:
     # Convert and auto-update blogs.yaml index
     python3 convert-blog.py blogs/posts/my-new-post.md --update-index
 
-    # Convert all markdown files in the blogs/posts directory
+    # Convert all markdown files in the blogs/posts directory (also refreshes the home page's preview tags)
     python3 convert-blog.py --convert-all
+
+    # Refresh only the home page's link-preview tags (index.html) from content/site/config.yaml
+    python3 convert-blog.py --home
 """
 
 # Standard library imports
@@ -60,6 +63,52 @@ def get_site_url(config_path=SITE_CONFIG_PATH):
     except Exception as e:
         print(f"⚠️  Warning: Could not load site config from {config_path}: {e}")
         return ""
+
+
+# The link-preview block in index.html and blogs/_blog_template.html, replaced with each page's own
+OG_PATTERN = r'    <!-- Open Graph / Social Media Meta Tags -->.*?<meta name="twitter:card"[^>]+/>'
+
+
+def og_tags(title, description, url, page_type, image, card):
+    """Link-preview tags (LinkedIn, WhatsApp, X read these; they don't run JavaScript). Values are escaped."""
+    e = lambda v: html.escape(str(v or ""))
+    return f"""    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="{e(title)}" />
+    <meta property="og:description" content="{e(description)}" />
+    <meta property="og:url" content="{e(url)}" />
+    <meta property="og:type" content="{page_type}" />
+    <meta property="og:image" content="{e(image)}" />
+    <meta name="twitter:card" content="{card}" />"""
+
+
+def update_home_page(index_path="index.html", config_path=SITE_CONFIG_PATH):
+    """Write the home page's <title> and link-preview tags from config.yaml (name, role, description, photo)."""
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            site = (yaml.safe_load(f) or {}).get("site", {})
+        page = Path(index_path).read_text(encoding="utf-8")
+    except Exception as e:
+        print(f"⚠️  Warning: could not update {index_path}: {e}")
+        return
+    site_url = str(site.get("site_url") or "").rstrip("/")
+    name, role = site.get("name", ""), (site.get("role") or {}).get("title", "")
+    photo = site.get("profile_picture_path", "")
+    tags = og_tags(
+        f"{name} · {role}" if role else name,
+        site.get("description", ""),
+        f"{site_url}/" if site_url else "",
+        "website",
+        f"{site_url}/{photo}" if site_url and photo and not photo.startswith("http") else photo,
+        "summary",  # a small square card: suits a portrait photo
+    )
+    if not re.search(OG_PATTERN, page, re.DOTALL):
+        print(f"⚠️  Warning: could not find the OG tags section in {index_path}")
+        return
+    page = re.sub(OG_PATTERN, lambda _: tags, page, flags=re.DOTALL)
+    title = html.escape(str(site.get("page_title") or name))
+    page = re.sub(r'<title id="page-title">.*?</title>', lambda _: f'<title id="page-title">{title}</title>', page)
+    Path(index_path).write_text(page, encoding="utf-8")
+    print(f"✅ Updated link preview: {index_path}")
 
 
 def parse_yaml_frontmatter(markdown_content):
@@ -177,34 +226,18 @@ def generate_blog_html(blog_metadata, blog_content, output_directory=DEFAULT_BLO
 
         # Extract blog metadata
         blog_id = blog_metadata["id"]
-        # escaped: they go into meta tag attributes
-        title = html.escape(str(blog_metadata["title"]))
-        excerpt = html.escape(str(blog_metadata.get("excerpt", "")))
         thumbnail = blog_metadata.get("thumbnail", "content/site/profile_picture.jpg")
 
         # Ensure thumbnail is an absolute URL
         site_url = get_site_url()
         if not thumbnail.startswith("http"):
             thumbnail = f"{site_url}/{thumbnail}" if site_url else thumbnail
-        thumbnail = html.escape(thumbnail)
 
-        # Create OG meta tags for this specific blog post
-        og_tags = f"""    <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="{title}" />
-    <meta property="og:description" content="{excerpt}" />
-    <meta property="og:url" content="{site_url}/blogs/{blog_id}.html" />
-    <meta property="og:type" content="article" />
-    <meta property="og:image" content="{thumbnail}" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />"""
-
-        # Replace the generic OG tags in the template with specific ones
-        og_pattern = r'    <!-- Open Graph / Social Media Meta Tags -->.*?<meta property="og:image:height"[^>]+/>'
-
-        if re.search(og_pattern, template_content, re.DOTALL):
-            updated_content = re.sub(
-                og_pattern, lambda _: og_tags, template_content, flags=re.DOTALL
-            )
+        # Replace the generic OG tags in the template with this post's
+        tags = og_tags(blog_metadata["title"], blog_metadata.get("excerpt", ""), f"{site_url}/blogs/{blog_id}.html",
+                       "article", thumbnail, "summary_large_image")
+        if re.search(OG_PATTERN, template_content, re.DOTALL):
+            updated_content = re.sub(OG_PATTERN, lambda _: tags, template_content, flags=re.DOTALL)
         else:
             print("⚠️ Warning: Could not find OG tags section in template")
             return None
@@ -474,6 +507,10 @@ def main():
     # Handle batch conversion of all files
     if sys.argv[1] == "--convert-all":
         batch_convert_all_markdown_files()
+        update_home_page()
+        return
+    if sys.argv[1] == "--home":
+        update_home_page()
         return
 
     # Handle single file conversion

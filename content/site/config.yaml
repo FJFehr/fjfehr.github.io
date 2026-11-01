@@ -8,6 +8,7 @@ site:
   name: "Fabio J. Fehr"
   footer_name: "Fabio J. Fehr"
   page_title: "🌞 Fabio J. Fehr"  # Browser tab title
+  description: "I find beauty in the way humans think and create. Today I explore it through AI research: systems that reason, learn and create."  # link-preview text
   nationality_flags: "🇿🇦 🇨🇭"  # Optional: displayed under profile picture
   author_name_pattern: "F. Fehr"  # Pattern to bold in publication author lists
   google_scholar_url: "https://scholar.google.com/citations?user=WaZWY0wAAAAJ&hl=en"

@@ -20,7 +20,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 # Personal data that must not survive setup.py (the "Template by Fabio J. Fehr" footer credit is intended)
-PERSONAL = ["Fablogio", "phc_wmz", "264811", "Johannesburg", "Cape Town", "F. Fehr", "fabiofehr96", "SYNTHIA"]
+PERSONAL = ["Fablogio", "phc_wmz", "264811", "Johannesburg", "Cape Town", "F. Fehr", "fabiofehr96", "SYNTHIA", "fabiojfehr.com", "profile_picture_alt2", "beauty in the way"]
 # What setup.py leaves for the user; the docs (README, CLAUDE.md, .guides) and _template/ are not the site
 SITE = ["index.html", "css", "js", "blogs", "content", ".github"]
 

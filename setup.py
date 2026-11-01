@@ -10,6 +10,7 @@ Usage:
 """
 
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -94,6 +95,9 @@ def main():
     copy_template_files()
     removed_blogs = clear_blogs()
     removed_files = clear_personal_files()
+    # index.html's link-preview tags hold the old owner's name and photo: rewrite them from the blank config
+    if subprocess.run([sys.executable, "convert-blog.py", "--home"], cwd=ROOT, capture_output=True).returncode:
+        print("Warning: could not reset index.html's link preview (needs: pip install pyyaml)")
 
     print("Done!\n")
     print("  Config blanked       ->  edit content/site/config.yaml")
@@ -119,6 +123,9 @@ def main():
     print("  8. Add highlighted projects in content/projects/projects.yaml")
     print("  9. Optional: a living background behind your profile: copy")
     print("     js/background/background.example.json to background.json (scene: js/background/example.js)")
+    print()
+    print("After editing config.yaml, refresh the home page's link preview:")
+    print("  python3 convert-blog.py --home")
     print()
     print("To add a blog post:")
     print("  python3 convert-blog.py blogs/posts/my-post.md --update-index")

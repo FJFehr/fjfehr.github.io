@@ -8,6 +8,7 @@ site:
   name: "YOUR_NAME"
   footer_name: "YOUR_NAME"
   page_title: "YOUR_NAME"      # Browser tab title
+  description: ""             # Optional: one line shown in link previews (LinkedIn, WhatsApp, X)
   nationality_flags: ""        # Optional: displayed under profile picture (e.g. "🇺🇸 🇬🇧")
   author_name_pattern: ""      # Pattern to bold in publication author lists (e.g. "A. Author")
   google_scholar_url: ""       # https://scholar.google.com/citations?user=YOUR_ID&hl=en
