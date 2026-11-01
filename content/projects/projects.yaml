@@ -7,7 +7,7 @@
   title: "SYNTHIA"
   image: "content/projects/images/synthia.png"
   url: "https://synthia.space"
-  summary: "AI that jams with you *live*! Three PhDs in AI who are also musicians (Karl El Hajal, Laurent Colbois, and myself) came up with the idea while making music in Karl's home studio. Powered by a custom generative AI MIDI model, SYNTHIA won first place and CHF 15,000 (the Idiap-IdeArk Prize) at the Idiap Create Challenge 2025, where we performed it live on stage. Today, synthia.space is a collection of musical experiments:"
+  summary: "**AI that jams with you live!** Born in Karl's home studio, SYNTHIA was created by three AI PhDs and musicians (Karl El Hajal, Laurent Colbois, and myself). Powered by a custom generative MIDI model, it won **first place and CHF 15,000 (Idiap-IdeArk Prize)** at the Idiap Create Challenge 2025, where we performed live on stage. Today, **synthia.space** is our playground for generative AI and music experiments."
   children:
     - title: "2025 SYNTH*IA* - Idiap Create Challenge Winners"
       video_id: "Vhwi-pR9_wg"

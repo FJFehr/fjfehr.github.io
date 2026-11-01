@@ -28,6 +28,7 @@ Examples:
 """
 
 # Standard library imports
+import html
 import json
 import re
 import sys
@@ -90,17 +91,12 @@ def parse_yaml_frontmatter(markdown_content):
     frontmatter_text = markdown_content[frontmatter_start:frontmatter_end]
     content_without_frontmatter = markdown_content[closing_delimiter_match.end() :]
 
-    # Parse simple YAML key-value pairs
-    for line in frontmatter_text.split("\n"):
-        line = line.strip()
-        if not line or ":" not in line:
-            continue
-
-        # Split on first colon only
-        key, value = line.split(":", 1)
-        key = key.strip()
-        value = value.strip().strip("'\"")  # Remove quotes if present
-        frontmatter_data[key] = value
+    # Values as text (dates too), except true/false; an empty field is ""
+    parsed = yaml.safe_load(frontmatter_text) or {}
+    frontmatter_data = {
+        str(key): value if isinstance(value, bool) else "" if value is None else str(value).strip()
+        for key, value in parsed.items()
+    }
 
     return frontmatter_data, content_without_frontmatter
 
@@ -181,14 +177,16 @@ def generate_blog_html(blog_metadata, blog_content, output_directory=DEFAULT_BLO
 
         # Extract blog metadata
         blog_id = blog_metadata["id"]
-        title = blog_metadata["title"]
-        excerpt = blog_metadata.get("excerpt", "")
+        # escaped: they go into meta tag attributes
+        title = html.escape(str(blog_metadata["title"]))
+        excerpt = html.escape(str(blog_metadata.get("excerpt", "")))
         thumbnail = blog_metadata.get("thumbnail", "content/site/profile_picture.jpg")
 
         # Ensure thumbnail is an absolute URL
         site_url = get_site_url()
         if not thumbnail.startswith("http"):
             thumbnail = f"{site_url}/{thumbnail}" if site_url else thumbnail
+        thumbnail = html.escape(thumbnail)
 
         # Create OG meta tags for this specific blog post
         og_tags = f"""    <!-- Open Graph / Social Media Meta Tags -->
@@ -205,7 +203,7 @@ def generate_blog_html(blog_metadata, blog_content, output_directory=DEFAULT_BLO
 
         if re.search(og_pattern, template_content, re.DOTALL):
             updated_content = re.sub(
-                og_pattern, og_tags, template_content, flags=re.DOTALL
+                og_pattern, lambda _: og_tags, template_content, flags=re.DOTALL
             )
         else:
             print("⚠️ Warning: Could not find OG tags section in template")
@@ -221,7 +219,7 @@ def generate_blog_html(blog_metadata, blog_content, output_directory=DEFAULT_BLO
                 "content": blog_content,
             },
             ensure_ascii=False,
-        )
+        ).replace("</", "<\\/")  # a "</script>" in the post must not end the script tag
 
         auto_load_script = f"""
     <script>

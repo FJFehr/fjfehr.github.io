@@ -1,0 +1,123 @@
+{
+  "_about": "A living ASCII scene behind the home page header and profile, loaded by js/main.js (HERO BACKGROUND). Personal: setup.py deletes this file and capetown.js, keeping engine.js and the example. Delete this file to turn it off. timezone: the scene's clock (IANA name; leave out for the visitor's own); place: named in the time buttons' label. focus_column/focus_row: the scene cell put at the profile photo's centre (here the Table's centre, on the horizon). zoom: below 1 zooms out (down to the whole scene across the width). photo_row: the scene starts right under the top bar and the profile (photo and bio) starts at this scene row (the horizon is row 64), so the Table shows above it; photo_row_wide overrides it above 720px; leave both out to centre the photo on the focus cell instead. footer_band: [first row, rows] of the scene echoed in the footer. footer_note: optional line above the caption. captions: [from hour, text] for the footer, in order. presets: [label, hour] buttons under the footer's time slider (Cape Town time). accents: [from hour, light-theme link colour, dark-theme link colour], the site's brand colour following the scene (night: violet sky; AA-checked on the page and hover fills).",
+  "scene": "capetown",
+  "timezone": "Africa/Johannesburg",
+  "place": "Cape Town",
+  "themes": [
+    "dark",
+    "light"
+  ],
+  "fps": 24,
+  "fps_small": 15,
+  "focus_column": 80,
+  "focus_row": 64,
+  "photo_row": 68,
+  "photo_row_wide": 72,
+  "grid": [
+    240,
+    120
+  ],
+  "footer_band": [
+    10,
+    76
+  ],
+  "footer_note": "A slice of home · **Cape Town** · dynamic and beautiful",
+  "captions": [
+    [
+      0,
+      "A starry night over Table Mountain: the Milky Way and the Southern Cross."
+    ],
+    [
+      5.2,
+      "Dawn: first light behind Table Mountain, watching the surfers paddle out."
+    ],
+    [
+      6.8,
+      "Morning: watching the surfers."
+    ],
+    [
+      12.5,
+      "Midday: the tablecloth rolls over Table Mountain."
+    ],
+    [
+      14,
+      "Afternoon: kitesurfers in the south-easter, the tablecloth on the Table."
+    ],
+    [
+      17.7,
+      "Golden hour: the last kitesurfers in the golden light."
+    ],
+    [
+      19.2,
+      "Sunset: the sky on fire over the Atlantic, the cormorants flying home."
+    ],
+    [
+      20.4,
+      "Dusk: the city lights come on under Table Mountain."
+    ],
+    [
+      20.7,
+      "A starry night over Table Mountain: the Milky Way and the Southern Cross."
+    ]
+  ],
+  "presets": [
+    [
+      "Morning",
+      6.5
+    ],
+    [
+      "Midday",
+      14
+    ],
+    [
+      "Sunset",
+      19.5
+    ],
+    [
+      "Night",
+      22
+    ]
+  ],
+  "accents": [
+    [
+      0,
+      "#5e3fa6",
+      "#c0a8f5"
+    ],
+    [
+      5.2,
+      "#a0466a",
+      "#f0a3bd"
+    ],
+    [
+      6.8,
+      "#1f5f9e",
+      "#8ec3f0"
+    ],
+    [
+      12.5,
+      "#1d6696",
+      "#86c5ea"
+    ],
+    [
+      14,
+      "#2459a8",
+      "#9db8f5"
+    ],
+    [
+      17.7,
+      "#a84a12",
+      "#f5a060"
+    ],
+    [
+      20.4,
+      "#6a4ba8",
+      "#b9a2f0"
+    ],
+    [
+      20.7,
+      "#5e3fa6",
+      "#c0a8f5"
+    ]
+  ]
+}

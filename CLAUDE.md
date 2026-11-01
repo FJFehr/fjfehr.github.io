@@ -29,7 +29,7 @@ This repo is also a public GitHub template. `python3 setup.py` must leave a clea
 - New personal asset folder → have `setup.py` clear it (`clear_personal_files`).
 - Removed or renamed config option → remove or rename it in `_template/content/site/config.yaml` too.
 - Optional fields must stay optional in `js/main.js`: a missing field must not blank a section.
-- After template-affecting changes, test on a scratch copy: run `setup.py`, check every YAML parses, and grep for personal names.
+- After template-affecting changes, run `python3 tests/check_template.py`: it runs `setup.py` on a scratch copy, checks every YAML parses, greps for personal data (add new personal markers to its `PERSONAL` list), and checks the blog converter's escaping.
 - `TODO.md` is local planning notes: never commit it.
 
 ## Architecture
@@ -52,6 +52,7 @@ This repo is also a public GitHub template. `python3 setup.py` must leave a clea
 | `blogs/_blog_template.html` | Template used by the converter to produce blog HTML files |
 | `js/main.js` | All JS: config loading, YAML fetching, markdown parsing, routing, theme toggle, TOC generation |
 | `css/style.css` | All CSS: variables (light/dark themes), layout, components, responsive rules |
+| `js/background/` | Optional hero background (ascii.rest scene): `engine.js` + `example.js` ship in the template; `background.json` turns it on (template: copy `background.example.json`); personal scenes are removed by `setup.py` |
 
 **JavaScript structure (`js/main.js`):** Wrapped in an IIFE. Sections in order: config loader → utility functions → timeline → media → main page loaders (publications, blogs, profile) → blog page functions → page detection/init.
 

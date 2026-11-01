@@ -17,20 +17,22 @@
      * general site analytics. The displayed count is read from a static
      * JSON file (content/site/blog-likes.json) baked daily by a GitHub
      * Action that queries these events — see .github/workflows/update-like-counts.yml.
+     * Optional: set site.posthog in config.yaml; without it the like button is hidden.
      */
-    const POSTHOG_KEY  = 'phc_wmzgAdibfwpdrcdSh9979xB3nWURHsvZJQYqovXMhkrQ';
-    const POSTHOG_HOST = 'https://eu.posthog.com';
     const BLOG_LIKES_JSON = '../content/site/blog-likes.json';
 
-    // PostHog loader snippet (official minimal loader — lazy-loads the real
-    // library from PostHog's CDN on first use, defines window.posthog).
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.uploadQueue=t.uploadQueue||[],t.uploadQueue.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSurveysWaitingWithData syncWithPHVersion".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init(POSTHOG_KEY, {
-        api_host: POSTHOG_HOST,
-        autocapture: false,
-        capture_pageview: false,
-        disable_session_recording: true,
-    });
+    function initPostHog(ph) {
+        // PostHog loader snippet (official minimal loader — lazy-loads the real
+        // library from PostHog's CDN on first use, defines window.posthog).
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.uploadQueue=t.uploadQueue||[],t.uploadQueue.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSurveysWaitingWithData syncWithPHVersion".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        window.posthog.init(ph.key, {
+            api_host: ph.host || 'https://eu.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            disable_session_recording: true,
+            persistence: 'memory', // no cookie or storage: each like is an anonymous one-off event
+        });
+    }
 
     /**
      * ===================================================================
@@ -126,7 +128,7 @@
         return text
             .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')  // Links
             .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')  // Bold
-            .replace(/\*([^*]+)\*/g, '<em>$1</em>');  // Italic
+            .replace(/\*(\S[^*]*?)\*/g, '<em>$1</em>');  // Italic (not "* " bullets)
     }
 
 /**
@@ -157,7 +159,7 @@ function parseMarkdown(markdown) {
     html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
     
     // Parse italic *text*
-    html = html.replace(/\*([^\*]+)\*/g, '<em>$1</em>');
+    html = html.replace(/\*(\S[^*]*?)\*/g, '<em>$1</em>'); // not "* " bullets
     
     // Parse lists - handle both unordered (-) and ordered (1.)
     const blocks = html.split(/\n\n+/);
@@ -288,10 +290,15 @@ async function loadTimeline() {
             // Same markdown parser as blog posts: paragraphs, bullet lists, bold, italic, links
             const formattedDescription = parseMarkdown(item.description || '');
 
-            // Make logo clickable if URL exists
-            const logoHTML = item.url 
-                ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="timeline-logo-link"><img src="${item.logo}" alt="${item.organization} logo" class="timeline-logo"></a>`
+            // Optional dark-mode logo swaps in via the shared .img-light/.img-dark rules
+            const imgHTML = item.logo_dark
+                ? `<img src="${item.logo}" alt="${item.organization} logo" class="timeline-logo img-light"><img src="${item.logo_dark}" alt="${item.organization} logo" class="timeline-logo img-dark">`
                 : `<img src="${item.logo}" alt="${item.organization} logo" class="timeline-logo">`;
+
+            // Make logo clickable if URL exists
+            const logoHTML = item.url
+                ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="timeline-logo-link">${imgHTML}</a>`
+                : imgHTML;
             
             return `
             <div class="timeline-item">
@@ -462,7 +469,8 @@ async function loadLayoutConfiguration() {
                 let href = navItem.href;
 
                 // Replace {{cv_path}} placeholder with actual CV URL
-                if (href.includes('{{cv_path}}') && config.site?.cv_path) {
+                if (href.includes('{{cv_path}}')) {
+                    if (!config.site?.cv_path) return; // no CV set: no CV link
                     href = href.replace('{{cv_path}}', config.site.cv_path);
                 }
 
@@ -512,6 +520,8 @@ async function loadLayoutConfiguration() {
         
         if (footerTaglineElement && config.layout?.footer?.tagline) {
             footerTaglineElement.textContent = config.layout.footer.tagline;
+        } else if (footerTaglineElement) {
+            footerTaglineElement.remove(); // optional: no tagline, no line
         }
         if (footerYearElement && config.layout?.footer?.year) {
             footerYearElement.textContent = config.layout.footer.year;
@@ -625,13 +635,14 @@ async function loadPublications() {
                   '</div>'
                 : '';
             
-            // Bold author name using pattern from config
-            const authorPattern = config.site?.author_name_pattern || 'F. Fehr';
-            const regex = new RegExp(`\\b${authorPattern.replace('.', '\\.')}\\b`, 'g');
-            const formattedAuthors = pub.authors.replace(regex, `<strong>${authorPattern}</strong>`);
+            // Bold author name using pattern from config (none set: nothing bolded)
+            const authorPattern = config?.site?.author_name_pattern;
+            const formattedAuthors = authorPattern
+                ? pub.authors.replace(new RegExp(`\\b${authorPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g'), `<strong>${authorPattern}</strong>`)
+                : pub.authors;
             
             return `
-            <div class="publication" onclick="window.open('${pub.paper || pub.link}', '_blank', 'noopener,noreferrer')">
+            <div class="publication"${(pub.paper || pub.link) ? ` onclick="window.open('${pub.paper || pub.link}', '_blank', 'noopener,noreferrer')"` : ''}>
                 <div class="pub-image">
                     ${pub.image_dark
                         ? `<img class="img-light" src="${pub.image}" alt="${pub.title} thumbnail"><img class="img-dark" src="${pub.image_dark}" alt="${pub.title} thumbnail">`
@@ -782,10 +793,231 @@ function initNavHighlight() {
     updateActiveLink();
 }
 
+/**
+ * Optional hero background: a living ASCII scene (an ascii.rest piece) behind the header and profile.
+ * Everything lives in js/background/: background.json (its settings), the scene module and engine.js. No
+ * background.json, no background: the template ships background.example.json and example.js to start from.
+ * ascii.rest pauses the scene off-screen and in hidden tabs, and holds a still frame under
+ * prefers-reduced-motion. On top of that it loads only once the page is idle, runs at a lower frame
+ * rate on phones and weaker devices, and stays still when the visitor asks to save data.
+ */
+const ASCII_REST = 'https://cdn.jsdelivr.net/npm/ascii.rest@0.4.0/dist/ascii.js';
+
+async function initHeroBackground() {
+    const main = document.querySelector('main');
+    const profile = document.querySelector('.profile-section');
+    if (!main || !profile) return;
+    let bg;
+    try {
+        const res = await fetch('js/background/background.json');
+        if (!res.ok) return;
+        bg = await res.json();
+    } catch (error) {
+        return;
+    }
+    if (!bg || !/^[a-z0-9-]+$/.test(bg.scene || '')) return;
+    const themes = bg.themes || ['dark'];
+    const [cols, rows] = bg.grid || [200, 100]; // the scene's cells, as in its meta
+    const root = document.documentElement;
+
+    const layer = document.createElement('div');
+    layer.className = 'hero-bg';
+    layer.setAttribute('aria-hidden', 'true');
+    main.prepend(layer);
+
+    const weak = matchMedia('(max-width: 720px), (pointer: coarse)').matches || (navigator.hardwareConcurrency || 8) <= 4;
+    const saveData = navigator.connection && navigator.connection.saveData;
+    const fps = saveData ? 0 : weak ? (bg.fps_small || 15) : (bg.fps || 24);
+
+    // Cover from the top of the page to just below the profile (on a narrow screen only down past the
+    // photo, so a long bio does not blow the scene up), and draw the canvas at the size it shows, so it
+    // stays sharp and no bigger than needed. It is cropped so the scene's focus column sits behind the
+    // profile photo.
+    const wide = matchMedia('(min-width: 721px)');
+    const fit = () => {
+        const photo = document.getElementById('profile-img');
+        const W = layer.clientWidth;
+        // Place the scene's focus cell (focus_column, focus_row) at the
+        // photo's centre. The cells are as small as the width allows (zoomed out): the canvas covers the
+        // layer's width, and may start below its top, where the fade-in moves with it.
+        const fc = (bg.focus_column ?? 40) + 0.5, fr = (bg.focus_row ?? 44) + 0.5;
+        let cx = W / 2;
+        if (photo) {
+            const p = photo.getBoundingClientRect();
+            cx = p.left + p.width / 2 - layer.getBoundingClientRect().left;
+        }
+        // zoom < 1 shows more of the scene; the edge clamp below then slides the focus off the photo
+        const cell = Math.max(W / cols, Math.max(cx / fc, (W - cx) / (cols - fc)) * (bg.zoom || 1));
+        // With photo_row set, the scene hangs from the top bar and the profile moves down to start at that
+        // scene row (below the horizon), so the scene shows above the photo instead of behind it
+        // (photo_row_wide, when set, above 720px)
+        const row = (wide.matches && bg.photo_row_wide != null) ? bg.photo_row_wide : bg.photo_row;
+        const stacked = row != null;
+        profile.style.setProperty('--hero-photo-top', stacked ? row * cell + 'px' : '');
+        const photoBottom = photo ? photo.getBoundingClientRect().bottom - main.getBoundingClientRect().top : 0;
+        // the scene starts below the top bar, which stays solid above it
+        const head = main.querySelector('.header');
+        const top0 = head ? head.offsetHeight : 0; // not offsetTop: the bar is sticky, so that grows with scrolling
+        let H = Math.min(profile.offsetTop + profile.offsetHeight + 40, Math.max(W * 0.6, photoBottom + 120)) - top0;
+        if (stacked) H = Math.min(H, rows * cell); // end the fade-out where the scene ends, not below it
+
+        layer.style.top = top0 + 'px';
+        layer.style.height = H + 'px';
+        const canvas = layer.querySelector('canvas');
+        if (!canvas) return;
+        let cy = H / 2;
+        if (photo) {
+            const p = photo.getBoundingClientRect();
+            cy = p.top + p.height / 2 - layer.getBoundingClientRect().top;
+        }
+        const left = Math.min(0, Math.max(W - cols * cell, cx - fc * cell));
+        const top = stacked ? 0 : cy - fr * cell;
+        canvas.style.width = cols * cell + 'px';
+        canvas.style.height = rows * cell + 'px';
+        canvas.style.left = left + 'px';
+        canvas.style.top = top + 'px';
+        layer.style.setProperty('--scene-top', Math.max(0, top) + 'px');
+    };
+
+    // ?bg-hour=19.5 previews another time of day (the scene follows the visitor's clock otherwise)
+    const hourParam = parseFloat(new URLSearchParams(location.search).get('bg-hour'));
+    // The scene's clock (bg.timezone, e.g. "Europe/Zurich"), so "now" is the same moment for every
+    // visitor; without one, the visitor's own clock
+    const clockHour = () => {
+        const [h, m] = new Intl.DateTimeFormat('en-GB', { timeZone: bg.timezone || undefined, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+            .format(new Date()).split(':').map(Number);
+        return h + m / 60;
+    };
+    let sceneHour = hourParam >= 0 && hourParam < 24 ? hourParam : clockHour();
+    // The brand colour follows the scene's light (bg.accents: [from hour, light-theme colour, dark-theme colour]);
+    // !important beats the config palette, which is set inline on <html> whenever it loads
+    const accentStyle = document.head.appendChild(document.createElement('style'));
+    const setAccent = () => {
+        const a = (bg.accents || []).filter(([from]) => from <= sceneHour).pop();
+        accentStyle.textContent = a ? `html.has-hero-bg {
+            --palette-light-link: ${a[1]} !important;
+            --palette-light-hover: color-mix(in srgb, ${a[1]} 10%, var(--bg-color)) !important;
+            --palette-dark-link: ${a[2]} !important;
+            --palette-dark-hover: color-mix(in srgb, ${a[2]} 15%, var(--bg-color)) !important;
+        }` : '';
+    };
+    setAccent();
+    // a new hour restarts the scene (it reads its options once)
+    const setHour = (h) => {
+        sceneHour = h;
+        setAccent();
+        if (art) art.remove();
+        art = null;
+        update();
+    };
+
+    // On in the listed themes only; removing the element stops its animation
+    let art = null;
+    const update = () => {
+        const on = themes.includes(root.getAttribute('data-theme'));
+        root.classList.toggle('has-hero-bg', on);
+        if (on && !art) {
+            art = document.createElement('ascii-art');
+            art.setAttribute('src', `js/background/${bg.scene}.js`);
+            art.setAttribute('fps', String(fps));
+            art.setAttribute('options', JSON.stringify({ hour: sceneHour }));
+            layer.appendChild(art);
+        } else if (!on && art) {
+            art.remove();
+            art = null;
+        }
+    };
+
+    const start = () => {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = ASCII_REST;
+        document.head.appendChild(script);
+        update();
+        new MutationObserver(update).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+        new MutationObserver(fit).observe(layer, { childList: true, subtree: true }); // the canvas arrives once loaded
+        new ResizeObserver(fit).observe(profile);
+        window.addEventListener('resize', fit);
+        fit();
+        footerScene();
+    };
+
+    // The footer echoes the scene: its horizon band (bg.footer_band: first row, row count), copied from the hero's
+    // canvas while the footer is on screen, a caption for the hour (bg.captions: [from hour, text], in order), and a
+    // row of presets with the scene's now (bg.presets: [label, hour]); each load starts at the scene's now
+    const footerScene = () => {
+        const footer = document.querySelector('footer');
+        if (!footer) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'footer-scene';
+        wrap.setAttribute('aria-hidden', 'true');
+        const out = document.createElement('canvas');
+        out.width = out.height = 0;
+        wrap.appendChild(out);
+        footer.prepend(wrap);
+        const caption = document.createElement('p');
+        caption.className = 'footer-scene-caption';
+        const fmt = (h) => {
+            const m = Math.round(h * 60) % 1440;
+            return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+        };
+        const time = document.createElement('div');
+        time.className = 'scene-time';
+        time.innerHTML = `
+            <div class="scene-time-presets" role="group" aria-label="Time of day${bg.place ? ' in ' + bg.place : ''}">
+                <button type="button" data-hour="now">Now<small></small></button>
+                ${(bg.presets || []).map(([label, h]) => `<button type="button" data-hour="${h}">${label}<small>${fmt(h)}</small></button>`).join('')}
+            </div>`;
+        // an optional line above the scene (bg.footer_note; **bold** and *italic* work)
+        if (bg.footer_note) {
+            const note = document.createElement('p');
+            note.className = 'footer-scene-note';
+            note.innerHTML = formatInlineMarkdown(bg.footer_note);
+            wrap.before(note);
+        }
+        wrap.after(caption, time);
+        let live = !(hourParam >= 0 && hourParam < 24);
+        const show = () => {
+            time.querySelector('[data-hour="now"] small').textContent = fmt(clockHour());
+            const c = (bg.captions || []).filter(([from]) => from <= sceneHour).pop();
+            caption.textContent = c ? c[1] : '';
+            time.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed',
+                String(b.dataset.hour === 'now' ? live : !live && Number(b.dataset.hour) === sceneHour)));
+        };
+        time.querySelector('.scene-time-presets').addEventListener('click', (e) => {
+            const b = e.target.closest('button');
+            if (!b) return;
+            live = b.dataset.hour === 'now';
+            setHour(live ? clockHour() : Number(b.dataset.hour));
+            show();
+        });
+        show();
+        const [bandTop, bandRows] = bg.footer_band || [44, 42];
+        let visible = false, last = 0;
+        const copy = (t = 0) => {
+            if (!visible) return;
+            requestAnimationFrame(copy);
+            const src = layer.querySelector('canvas');
+            if (t - last < 1000 / (fps || 1) || !src || !src.width || !root.classList.contains('has-hero-bg')) return;
+            last = t;
+            const w = Math.round(out.clientWidth * devicePixelRatio), hgt = Math.round((w * bandRows) / cols);
+            if (out.width !== w || out.height !== hgt) (out.width = w), (out.height = hgt);
+            out.getContext('2d').drawImage(src, 0, (src.height * bandTop) / rows, src.width, (src.height * bandRows) / rows, 0, 0, w, hgt);
+        };
+        new IntersectionObserver(([entry]) => {
+            const was = visible;
+            visible = entry.isIntersecting;
+            if (visible && !was) requestAnimationFrame(copy);
+        }).observe(footer);
+    };
+    start(); // at once: waiting for load and idle showed the plain layout first, then jumped
+}
+
 function initializeMainPage() {
     // Load configurations first so CSS variables are available
     loadLayoutConfiguration();
     loadSiteMetadata();
+    initHeroBackground();
 
     // Load content
     loadProfileContent();
@@ -855,7 +1087,9 @@ async function loadBlogPost() {
         const pageTitleElement = document.getElementById('page-title');
         
         if (titleElement) titleElement.textContent = blog.title;
-        if (pageTitleElement) pageTitleElement.textContent = `🤘 Fablogio`;
+        // the blog's name (layout.sections.blog.title) in the tab, else the post title
+        const blogName = (await loadConfig())?.layout?.sections?.blog?.title;
+        if (pageTitleElement) pageTitleElement.textContent = blogName || blog.title;
         wireShareButtons(blog.title);
         const headerTitleElement = document.getElementById('blog-header-title');
         if (headerTitleElement) {
@@ -1027,6 +1261,13 @@ async function initSunLike(postId) {
     const btn   = document.getElementById('sun-like-btn');
     const count = document.getElementById('sun-like-count');
     if (!btn || !count) return;
+
+    const ph = (await loadConfig())?.site?.posthog;
+    if (!ph?.key) {
+        document.getElementById('blog-sun-like')?.style.setProperty('display', 'none');
+        return;
+    }
+    initPostHog(ph);
 
     const storageKey = `liked:${postId}`;
     const alreadyLiked = localStorage.getItem(storageKey) === '1';

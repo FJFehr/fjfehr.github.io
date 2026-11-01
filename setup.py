@@ -64,6 +64,20 @@ def clear_personal_files():
         pdf.unlink()
         removed.append(str(pdf.relative_to(ROOT)))
 
+    # Custom domain: a template user must not serve this site's domain
+    cname = ROOT / "CNAME"
+    if cname.exists():
+        cname.unlink()
+        removed.append("CNAME")
+
+    # The personal hero background: keep the engine and the starter scene, so with no background.json
+    # there is no background until the user copies background.example.json
+    keep = {"engine.js", "example.js", "background.example.json", "preview.html", "LICENSE-ascii.rest"}
+    for f in (ROOT / "js" / "background").glob("*"):
+        if f.is_file() and f.name not in keep:
+            f.unlink()
+            removed.append(str(f.relative_to(ROOT)))
+
     # Images and files referenced only by personal content
     for folder in ("projects/images", "publications/files", "timeline/logos"):
         for f in (ROOT / "content" / folder).glob("*"):
@@ -103,6 +117,8 @@ def main():
     print("  6. Add your publications in content/publications/publications.yaml")
     print("  7. Add media highlights in content/media/media.yaml")
     print("  8. Add highlighted projects in content/projects/projects.yaml")
+    print("  9. Optional: a living background behind your profile: copy")
+    print("     js/background/background.example.json to background.json (scene: js/background/example.js)")
     print()
     print("To add a blog post:")
     print("  python3 convert-blog.py blogs/posts/my-post.md --update-index")

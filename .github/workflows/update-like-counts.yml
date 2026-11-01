@@ -6,7 +6,9 @@ name: Update blog like counts
 # to query aggregate counts. See js/main.js (initSunLike) for the read side.
 #
 # Requires a repo secret POSTHOG_API_KEY: a PostHog Personal API Key with
-# query read access (Settings > Secrets and variables > Actions).
+# query read access (Settings > Secrets and variables > Actions), and
+# site.posthog in content/site/config.yaml (host, project_id). Without
+# either, the job skips itself, so template copies don't fail daily.
 #
 # Note: GitHub disables scheduled workflows after 60 days with no commits
 # to the repo. Re-enable from the Actions tab if that happens.
@@ -32,10 +34,18 @@ jobs:
         run: |
           set -euo pipefail
 
+          # yq is preinstalled on GitHub's Ubuntu runners
+          PROJECT_ID=$(yq '.site.posthog.project_id // ""' content/site/config.yaml)
+          HOST=$(yq '.site.posthog.host // "https://eu.posthog.com"' content/site/config.yaml)
+          if [ -z "$PROJECT_ID" ] || [ -z "$POSTHOG_API_KEY" ]; then
+            echo "No site.posthog.project_id in config.yaml or no POSTHOG_API_KEY secret: skipping."
+            exit 0
+          fi
+
           HOGQL="SELECT properties.post_id AS post_id, count() AS likes FROM events WHERE event = 'blog_liked' GROUP BY post_id"
           PAYLOAD=$(jq -n --arg q "$HOGQL" '{query: {kind: "HogQLQuery", query: $q}}')
 
-          HTTP_CODE=$(curl -s -o /tmp/response.json -w "%{http_code}" -X POST "https://eu.posthog.com/api/projects/264811/query/" \
+          HTTP_CODE=$(curl -s -o /tmp/response.json -w "%{http_code}" -X POST "$HOST/api/projects/$PROJECT_ID/query/" \
             -H "Authorization: Bearer $POSTHOG_API_KEY" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD")

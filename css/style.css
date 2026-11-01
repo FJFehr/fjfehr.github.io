@@ -59,6 +59,7 @@ html[data-theme="dark"] {
   --border-color: #333;     /* Neutral — dividers, borders */
   --text-color: #e0e0e0;    /* Neutral — primary text */
   --muted-color: #a0a0a0;   /* Neutral — secondary / muted text */
+  --prose-color: #c4c4c4;   /* Neutral — bio / timeline text on the page background (cards keep muted) */
   --link-color: var(--palette-dark-link);   /* Brand  — links, active nav, interaction */
   --hover-bg:   var(--palette-dark-hover);  /* Brand  — hover fill for cards, nav items */
 }
@@ -182,6 +183,142 @@ html[data-theme="dark"] .theme-toggle:hover {
 .theme-toggle:focus:not(:focus-visible) {
   outline: none;
   background-color: transparent;
+}
+
+
+/* ========================================================================
+   HERO BACKGROUND (optional: js/background/, see js/main.js)
+   ======================================================================== */
+
+/* the scene sits behind the header and profile, fading in under the top bar and out slowly below */
+html.has-hero-bg main {
+  position: relative;
+}
+
+.hero-bg {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+html.has-hero-bg .hero-bg {
+  display: block;
+}
+
+.hero-bg ascii-art {
+  position: absolute;
+  inset: 0;
+  /* --scene-top (set by JS): where the canvas starts, when it starts below the top */
+  -webkit-mask-image: linear-gradient(to bottom, transparent var(--scene-top, 0px), #000 calc(var(--scene-top, 0px) + 80px), #000 45%, rgba(0, 0, 0, .55) 70%, rgba(0, 0, 0, .18) 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent var(--scene-top, 0px), #000 calc(var(--scene-top, 0px) + 80px), #000 45%, rgba(0, 0, 0, .55) 70%, rgba(0, 0, 0, .18) 88%, transparent 100%);
+}
+
+/* JS sizes and places it: the scene's full grid, cropped so its focus sits behind the photo */
+.hero-bg canvas {
+  position: absolute;
+  max-width: none;
+}
+
+html.has-hero-bg .profile-section {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--hero-photo-top, 380px); /* JS: photo_row in background.json; room for the sky and the Table above the profile */
+}
+
+@media (max-width: 720px) {
+  html.has-hero-bg .profile-section {
+    margin-top: var(--hero-photo-top, 220px);
+  }
+}
+
+/* the footer echoes the scene: its horizon band, fading in and out like the top, and a caption for the hour */
+.footer-scene,
+.footer-scene-caption {
+  display: none;
+}
+
+html.has-hero-bg footer {
+  border-top: none;
+}
+
+html.has-hero-bg .footer-scene {
+  display: block;
+  margin: 0 calc(-1 * var(--padding-horizontal)) 8px;
+}
+
+.footer-scene canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 75%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 75%, transparent);
+}
+
+html.has-hero-bg .footer-scene-note {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+html.has-hero-bg .footer-scene-caption {
+  display: block;
+  font-style: italic;
+}
+
+/* the time presets: one row of pills, the scene's now first */
+.scene-time {
+  display: none;
+  margin: 8px auto 20px;
+}
+
+html.has-hero-bg .scene-time {
+  display: block;
+}
+
+.scene-time-presets {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.scene-time-presets button {
+  font: inherit;
+  color: var(--muted-color);
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.scene-time-presets button small {
+  margin-left: 5px;
+  opacity: 0.7;
+}
+
+.scene-time-presets button[aria-pressed="true"] {
+  color: var(--bg-color);
+  background: var(--text-color);
+  border-color: var(--text-color);
+}
+
+/* soft panels keep the bio and role readable over the scene */
+html.has-hero-bg .profile-text {
+  background: color-mix(in srgb, var(--bg-color) 62%, transparent);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+html.has-hero-bg .profile-role {
+  text-shadow: 0 1px 6px var(--bg-color), 0 0 2px var(--bg-color);
 }
 
 
@@ -336,7 +473,7 @@ html[data-theme="dark"] .theme-toggle:hover {
 
 .profile-text p {
   margin: 0 0 16px 0;
-  color: var(--muted-color);
+  color: var(--prose-color, var(--muted-color));
   line-height: 1.6;
 }
 
@@ -403,7 +540,7 @@ html[data-theme="dark"] .theme-toggle:hover {
 /* Timeline dot indicator */
 .timeline-dot {
   position: absolute;
-  left: -23px;
+  left: -19px;  /* centre (128-19+4=113px) on the 2px line at 112px */
   top: 0px;
   width: 8px;
   height: 8px;
@@ -458,7 +595,7 @@ html[data-theme="dark"] .theme-toggle:hover {
 .timeline-description {
   margin: 0 0 12px 0;
   font-size: 14px;
-  color: var(--text-color);
+  color: var(--prose-color, var(--muted-color));
   line-height: 1.5;
 }
 
@@ -642,13 +779,13 @@ html[data-theme="dark"] .theme-toggle:hover {
   display: block;
 }
 
-/* Optional dark-mode thumbnail (image_dark in publications.yaml) */
-.pub-image .img-dark,
-html[data-theme="dark"] .pub-image .img-light {
+/* Optional dark-mode images (image_dark in publications.yaml, logo_dark in timeline.yaml) */
+.img-dark,
+html[data-theme="dark"] .img-light {
   display: none;
 }
 
-html[data-theme="dark"] .pub-image .img-dark {
+html[data-theme="dark"] .img-dark {
   display: block;
 }
 

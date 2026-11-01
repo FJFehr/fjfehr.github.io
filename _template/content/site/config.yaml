@@ -24,6 +24,13 @@ site:
   #     width: "43%"
   #     rotate: "0deg"
   site_url: "https://YOUR_USERNAME.github.io"  # Your GitHub Pages URL — no trailing slash (used for OG tags in blog posts)
+  # Optional: blog "toast" likes via PostHog. Leave out for no like button. The daily workflow
+  # .github/workflows/update-like-counts.yml bakes the counts; it needs the repo secret POSTHOG_API_KEY
+  # (a Personal API Key with query read access) and skips itself while project_id is unset.
+  # posthog:
+  #   key: "phc_YOUR_PROJECT_KEY"    # public project key (safe in the browser)
+  #   host: "https://eu.posthog.com" # or https://us.posthog.com
+  #   project_id: 12345
   role:
     title: "YOUR_ROLE"         # e.g. "PhD Student", "Software Engineer"
     affiliation: "YOUR_ORG"    # e.g. "MIT", "Google"
@@ -60,7 +67,7 @@ layout:
 
   footer:
     year: 2025
-    tagline: "Open source template"
+    tagline: "Open source template"  # optional: leave out for no tagline line
     license_text: "Template by Fabio J. Fehr"
     license_url: "https://github.com/FJFehr/fjfehr.github.io/"
 

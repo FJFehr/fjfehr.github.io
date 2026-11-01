@@ -22,7 +22,12 @@ site:
       top: "35.5%"
       width: "58%"
       rotate: "0deg"
-  site_url: "https://fjfehr.github.io"  # Your GitHub Pages URL — no trailing slash (used for OG tags in blog posts)
+  site_url: "https://fabiojfehr.com"  # Your site URL (GitHub Pages or custom domain) — no trailing slash (used for OG tags in blog posts)
+  # Optional: blog "toast" likes via PostHog (.github/workflows/update-like-counts.yml bakes the counts)
+  posthog:
+    key: "phc_wmzgAdibfwpdrcdSh9979xB3nWURHsvZJQYqovXMhkrQ"  # public project key (safe in the browser)
+    host: "https://eu.posthog.com"
+    project_id: 264811
   role:
     title: "AI Research Scientist"
     affiliation: "Cohere · Aleph Alpha"
@@ -56,8 +61,7 @@ layout:
   
   footer:
     year: 2026
-    tagline: "Created entirely by vibe coding and groovy tunes 🤖🎸 • Open source template"
-    license_text: "Template by Fabio J. Fehr"
+    license_text: "Open source template by fjfehr"
     license_url: "https://github.com/FJFehr/fjfehr.github.io/"
 
 # ===========================
