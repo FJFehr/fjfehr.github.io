@@ -1,0 +1,80 @@
+<!doctype html>
+<!-- Site viewer: the real home page (hero background, profile and all) at several screen sizes, driven by one time
+     slider through ?bg-hour=. Serve the repo (python3 -m http.server) and open /js/background/viewer.html.
+     The hour lives in the URL hash, so a reload keeps your place. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site viewer</title>
+<style>
+  body { margin: 0; background: #111; color: #ddd; font: 14px system-ui, sans-serif; }
+  .bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px 16px; position: sticky; top: 0; background: #111; z-index: 1; }
+  input[type=range] { flex: 1; min-width: 240px; }
+  output { font-variant-numeric: tabular-nums; min-width: 3em; }
+  button { background: #222; color: #ddd; border: 1px solid #444; border-radius: 4px; padding: 4px 10px; }
+  .frames { display: flex; flex-wrap: wrap; gap: 24px; padding: 16px; align-items: flex-start; }
+  figure { margin: 0; }
+  figcaption { color: #888; margin-bottom: 6px; }
+  .screen { overflow: hidden; border: 1px solid #333; border-radius: 6px; }
+  iframe { border: 0; transform-origin: 0 0; background: #fff; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <output id="hour"></output>
+  <input id="slider" type="range" min="0" max="24" step="0.0833">
+  <span id="jumps"></span>
+  <label>Height <input id="size" type="range" min="250" max="900" step="10" value="420"></label>
+  <small>←/→ ±15 min</small>
+</div>
+<div class="frames" id="frames"></div>
+<script>
+const SCREENS = [["Phone", 390, 844], ["Tablet", 820, 1180], ["Laptop", 1366, 768], ["Desktop", 1920, 1080]];
+const JUMPS = [["Dawn", 5.5], ["Sunrise", 7.25], ["Midday", 12.5], ["Afternoon", 15.5], ["Golden", 18.25], ["Evening", 19], ["Sunset", 19.25], ["Afterglow", 20.1], ["Night", 22]];
+const $ = (id) => document.getElementById(id);
+const fmt = (h) => { const m = Math.round(h * 60) % 1440; return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
+let hour = parseFloat(new URLSearchParams(location.hash.slice(1)).get("hour"));
+if (!(hour >= 0 && hour < 24)) hour = 19.25;
+
+const frames = SCREENS.map(([name, w, h]) => {
+    const fig = document.createElement("figure");
+    fig.innerHTML = `<figcaption>${name} · ${w}×${h}</figcaption><div class="screen"><iframe width="${w}" height="${h}" title="${name}"></iframe></div>`;
+    $("frames").append(fig);
+    return { w, h, screen: fig.querySelector(".screen"), iframe: fig.querySelector("iframe") };
+});
+const scale = () => {
+    const H = +$("size").value;
+    for (const f of frames) {
+        const s = H / f.h;
+        f.iframe.style.transform = `scale(${s})`;
+        f.screen.style.width = `${f.w * s}px`, f.screen.style.height = `${H}px`;
+    }
+};
+// each change reloads the pages, so wait until the slider rests
+let timer;
+const load = () => { for (const f of frames) f.iframe.src = `../../index.html?bg-hour=${hour.toFixed(3)}`; };
+const setHour = (h, now) => {
+    hour = ((h % 24) + 24) % 24;
+    $("hour").textContent = fmt(hour), $("slider").value = hour;
+    history.replaceState(null, "", "#hour=" + hour.toFixed(2));
+    clearTimeout(timer), (timer = setTimeout(load, now ? 0 : 300));
+};
+
+for (const [label, h] of JUMPS) {
+    const b = document.createElement("button");
+    b.textContent = `${label} ${fmt(h)}`;
+    b.onclick = () => setHour(h, true);
+    $("jumps").append(b);
+}
+$("slider").oninput = (e) => setHour(+e.target.value);
+$("size").oninput = scale;
+addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") setHour(hour + 0.25);
+    if (e.key === "ArrowLeft") setHour(hour - 0.25);
+});
+scale(); setHour(hour, true);
+</script>
+</body>
+</html>

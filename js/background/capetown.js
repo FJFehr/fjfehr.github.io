@@ -13,7 +13,7 @@
  * when null: picks the sunset mood and the cloud shapes).
  */
 import {
-    PALETTE, K, hash, scene, sky, celestial, rays, streaks, clouds, nightSky, landform, tablecloth, water,
+    PALETTE, K, hash, mix, smooth, scene, sky, celestial, rays, streaks, clouds, nightSky, landform, tablecloth, water,
     surfers, kites, gulls, flock, plane, eveningStar, shootingStar,
 } from "./engine.js";
 
@@ -58,6 +58,10 @@ const mountainBox = {
     features: { table: [0.4134, 0.6609] },
     front: { at: 0.3416, height: 1.02, left: 0.09, right: 0.072 },
     city: 0.95, // the city and its lights stop under Signal Hill
+    // the city climbs the slopes in a rounded bowl under the Table, a third of the way up at its middle
+    climb: (u) => 0.05 + 0.28 * Math.exp(-(((u - 0.54) / 0.17) ** 2)),
+    // its lights: thin on the flat coast on the left, almost none round Devil's Peak, full in the bowl and beyond
+    cityDensity: (u) => mix(mix(0.35, 0.04, smooth(0.15, 0.28, u)), 1, smooth(0.4, 0.5, u)),
 };
 
 // --- the light, as keyframes (colours sampled from the reference photos) --------------------------------------------
@@ -66,7 +70,7 @@ const mountainBox = {
 const NIGHT = K({
     zen: "#03050c", hor: "#0e1428", band: "#2a3050", bandAmt: 0.1, halo: "#4c5a6b", disc: "#f5f7ff",
     cloudDark: "#080b16", cloudMid: "#262e4a", cloudLit: "#b8c0dc",
-    mtn: "#04060c", mtnLit: "#0c1224", rim: "#7080b0", rimAmt: 0.45,
+    mtn: "#04060c", mtnLit: "#0c1224", rim: "#90a4d8", rimAmt: 0.8, // a clear silver outline
     sea: "#0d1733", seaLight: "#1d2c55", road: "#f2f2f2", roadBase: "#1f2640", foam: "#8090b0",
     lights: 1, star: 1, bird: 0, skyFloor: 0, // no minimum dot: a dark sky, lit only by the Milky Way and stars
 });
@@ -74,8 +78,23 @@ const SUNRISE = K({ // ct10: a pastel sky, the mountain's face catching pink lig
     zen: "#a8e3f8", hor: "#fcf2d0", band: "#ffd9b0", bandAmt: 0.35, halo: "#a08060", disc: "#fff0c0",
     cloudDark: "#9a8098", cloudMid: "#e6c0c0", cloudLit: "#fff0e6",
     mtn: "#8a5e4a", mtnLit: "#f0b890", rim: "#ffd8b8", rimAmt: 0.3,
-    sea: "#214b68", seaLight: "#e4aca9", road: "#ffd0c0", roadBase: "#40303a", foam: "#f0e0e6",
+    sea: "#4a82a8", seaLight: "#f0bcb8", road: "#ffd0c0", roadBase: "#40303a", foam: "#f0e0e6",
     lights: 0.25, star: 0, bird: 0.6, skyFloor: 0.15,
+});
+// before sunrise: the blue hour, then dawn, so the night fades slowly into a lighter and lighter blue
+const BLUE_HOUR = K({
+    zen: "#1c2c5c", hor: "#7a8cc4", mid: "#c890b8", midAmt: 0.3, band: "#e0a0c0", bandAmt: 0.4, halo: "#4c5a6b", disc: "#f5f7ff",
+    cloudDark: "#2a3260", cloudMid: "#7a78a8", cloudLit: "#d8b0cc",
+    mtn: "#141830", mtnLit: "#3a3a60", rim: "#b0a8d8", rimAmt: 0.55,
+    sea: "#22325e", seaLight: "#6a70a8", road: "#e8d8f0", roadBase: "#2a3058", foam: "#a8a8d0",
+    lights: 0.85, star: 0.55, bird: 0, skyFloor: 0.05,
+});
+const DAWN = K({
+    zen: "#78a8e0", hor: "#f8d4e2", mid: "#f4bcd6", midAmt: 0.4, band: "#ffc4d0", bandAmt: 0.45, halo: "#806878", disc: "#fff0d0",
+    cloudDark: "#8a8ab8", cloudMid: "#e4b8d4", cloudLit: "#ffe4f0",
+    mtn: "#6a5468", mtnLit: "#d0a0b0", rim: "#ffd0b8", rimAmt: 0.35,
+    sea: "#5a8cbc", seaLight: "#f0c8dc", road: "#ffd8e0", roadBase: "#3a3a58", foam: "#e8e0f0",
+    lights: 0.5, star: 0.1, bird: 0.2, skyFloor: 0.1,
 });
 const DAY = K({ // ct2, ct3, ct7
     zen: "#4a99e0", hor: "#87c5fb", band: "#bfe3ff", bandAmt: 0.15, halo: "#706850", disc: "#fffbe0",
@@ -84,14 +103,24 @@ const DAY = K({ // ct2, ct3, ct7
     sea: "#086474", seaLight: "#2f9cad", road: "#fffbe6", roadBase: "#0c1818", foam: "#e6f0f6",
     lights: 0, star: 0, bird: 1, skyFloor: 0.15,
 });
+// midday: the sun at its peak in a clear, deep blue sky
+const MIDDAY = { ...DAY, ...K({ zen: "#1460c8", hor: "#5aa8f0", band: "#a8d8ff", bandAmt: 0.1 }) };
 // the afternoon: the same light, the bay turning sea green in the south-easter
 const AFTERNOON = { ...DAY, ...K({ sea: "#08666e", seaLight: "#32a4aa", foam: "#e8f2f2" }) }; // teal: between the morning blue and sea green
-const GOLDEN = K({ // ct8
-    zen: "#5e96c3", hor: "#e9d391", band: "#f0d890", bandAmt: 0.5, halo: "#a08040", disc: "#fff0b0",
-    cloudDark: "#8c8070", cloudMid: "#e0c898", cloudLit: "#fff0c8",
-    mtn: "#4a3a2c", mtnLit: "#b07850", rim: "#ffd890", rimAmt: 0.35,
-    sea: "#214d53", seaLight: "#77a2a8", road: "#ffe6a0", roadBase: "#302818", foam: "#e8e0c8",
+const GOLDEN = K({ // ct8, warmed: amber and orange from early on
+    zen: "#4e88c0", hor: "#f2b060", band: "#ff9a40", bandAmt: 0.65, halo: "#b07030", disc: "#ffe0a0",
+    cloudDark: "#8c6a58", cloudMid: "#f0a868", cloudLit: "#ffd8a0",
+    mtn: "#4a3226", mtnLit: "#c07448", rim: "#ffc070", rimAmt: 0.4,
+    sea: "#24484e", seaLight: "#b09070", road: "#ffc070", roadBase: "#302018", foam: "#f0d8b8",
     lights: 0, star: 0, bird: 0.8, skyFloor: 0.15,
+});
+// before the sunset proper: the horizon burning orange, the clouds red-orange
+const EMBER = K({
+    zen: "#3e5c9a", mid: "#e0704a", midAmt: 0.45, hor: "#ff8a38", band: "#ff6018", bandAmt: 0.85, halo: "#c05828", disc: "#ffc070",
+    cloudDark: "#6a3a40", cloudMid: "#e8683e", cloudLit: "#ffa860",
+    mtn: "#2a1e28", mtnLit: "#7a4434", rim: "#ff9a50", rimAmt: 0.55,
+    sea: "#2a3a52", seaLight: "#c07860", road: "#ff9a48", roadBase: "#3a2420", foam: "#e8c0a8",
+    lights: 0.2, star: 0, bird: 0.6, skyFloor: 0.15,
 });
 // the sunset in four moods, picked by date (ct4, ct9, the photo pasted into chat): a deep zenith, a magenta band
 // two thirds of the way down (mid), and a burning horizon
@@ -105,7 +134,7 @@ const SUNSET_BASE = K({
     halo: "#a05020", disc: "#ffc060", bandAmt: 1, cloudDark: "#3a2850", midAmt: 0.6,
     mtn: "#0b1a40", mtnLit: "#1c2f5c", rim: "#ff9a40", rimAmt: 0.7,
     sea: "#2c3a5c", seaLight: "#8693c2", roadBase: "#4a3a40", foam: "#c8b8c0",
-    lights: 0.7, star: 0.15, bird: 0.3, skyFloor: 0.15,
+    lights: 0.7, star: 0.4, bird: 0.3, skyFloor: 0.15,
 });
 // the afterglow, just after the sun is down: the clouds' bellies still red, the sky going violet over the city lights
 const AFTERGLOW = K({
@@ -113,35 +142,46 @@ const AFTERGLOW = K({
     cloudDark: "#2a1838", cloudMid: "#a03860", cloudLit: "#ff7a6a",
     mtn: "#060a20", mtnLit: "#101a3a", rim: "#ff6a40", rimAmt: 0.5,
     sea: "#1a2244", seaLight: "#6a5a90", road: "#ff9070", roadBase: "#3a2a3a", foam: "#a090a8",
-    lights: 0.9, star: 0.3, bird: 0.15, skyFloor: 0.12,
+    lights: 0.9, star: 0.6, bird: 0.15, skyFloor: 0.12,
 });
 // every key needs every colour to blend: a light without a middle band has its horizon colour there, unused
 const withMid = (L) => ({ mid: L.hor, midAmt: 0, ...L });
 const timeline = (sunset) => {
     const dusk = { ...SUNSET_BASE, ...sunset };
-    return [[0, NIGHT], [5.2, NIGHT], [6.4, SUNRISE], [8.2, DAY], [11.5, DAY], [13.5, AFTERNOON], [16.2, AFTERNOON], [17.7, GOLDEN], [19.2, dusk], [19.95, AFTERGLOW], [20.8, NIGHT], [24, NIGHT]]
+    return [[0, NIGHT], [4.3, NIGHT], [5.3, BLUE_HOUR], [5.9, DAWN], [6.6, SUNRISE], [8.2, DAY], [11.5, MIDDAY], [13, MIDDAY], [14.2, AFTERNOON], [16, AFTERNOON], [17.3, GOLDEN], [18.4, EMBER], [19.2, dusk], [20.1, AFTERGLOW], [21, NIGHT], [24, NIGHT]]
         .map(([h, L]) => [h, withMid(L)]);
 };
 // the day's story, as amounts by hour
 const WIND = [[0, 0], [11, 0], [13.5, 1], [17.5, 1], [19.5, 0.15], [21, 0], [24, 0]]; // the south-easter
-const CLOTH = [[0, 0], [12.5, 0], [14.5, 1], [16.8, 1], [18, 0], [24, 0]]; // the tablecloth, gone before sunset
+const CLOTH = [[0, 0], [13.3, 0], [14.8, 1], [16.8, 1], [18, 0], [24, 0]]; // the tablecloth, gone before sunset
+// the Milky Way: hidden in the sunset, brightest before the moon is highest, faded while its light rules the sky, bright
+// again as it drops, gone before the sun
+const MILKY = [[0, 0.75], [1, 1], [4, 1], [4.8, 0.5], [5.5, 0], [19.9, 0], [20.7, 0.6], [21.2, 1], [22, 0.45], [23.3, 0.4], [24, 0.75]];
+const CLOUDS = [[0, 1], [10, 1], [11.3, 0], [13.3, 0], [14.6, 1], [24, 1]]; // the sun at its peak: a clear sky
 const SURF = [[0, 0], [5.8, 0], [6.8, 1], [11, 1], [12.5, 0], [24, 0]]; // surfers in the lineup
-const FIRE = [[0, 0], [18.3, 0], [19.3, 0.7], [19.8, 1], [20.3, 0.85], [20.9, 0], [24, 0]]; // the sunset, peaking as the sun goes
-// the sun rises just right of Signal Hill and sets over the sea on the right; the moon rises on the right too and
-// peaks at 22:00 (shows once the sun is down)
-const SUN = { hours: [5.9, 19.8], x: [126 + PAD, 148 + PAD], height: 38 };
-const MOON = { hours: [17.4, 26.6], x: [128 + PAD, 150 + PAD], height: 34 };
+const SIDE = [[0, 0], [5.2, 0], [6.3, 1], [7.6, 0.8], [9, 0], [24, 0]]; // sunrise: colour on the left, the right still dark
+const FIRE = [[0, 0], [17.8, 0], [18.6, 0.35], [19.3, 0.7], [19.8, 1], [20.3, 0.9], [20.7, 0.5], [21.1, 0], [24, 0]]; // the sunset, peaking as the sun goes
+// the sun rises in the east, over the low slopes left of Devil's Peak, and sets over the sea on the right (west); the
+// moon stays over the sea on the right, so its road on the water shows: high above Lion's Head toward the sea at dusk,
+// warm yellow up there, whitening as it falls slowly into the sea as the sun comes up
+const SUN = { hours: [5.9, 19.8], x: [-25 + PAD, 165 + PAD], height: 38 };
+const MOON = { hours: [12.6, 31.4], x: [128 + PAD, 150 + PAD], height: 34 };
+// the night sky drifts gently right through the night, toward the moon, from where it stands as the night begins
 
 // --- the night sky: Milky Way and constellations (sky cells, rows from the top) ----------------------------------------
-// The Milky Way rises from behind the mountain through the Southern Cross, which sits over Devil's Peak (looking south
-// from Big Bay the Cross really is over the mountain). Orion, drawn southern-hemisphere way up (feet on top), is over
+// The Southern Cross sits over Devil's Peak, low under the south pole as on a November night (really about 4 degrees up,
+// lifted here to clear the mountain), so its long arm (Gacrux to Acrux) points up, away from the mountain, toward the
+// pole. As in the sky (galactic coordinates): the Milky Way's plane runs through Acrux, square to the long arm, with the
+// rest of the Cross hanging off one side of the band; the Coalsack lies just past Acrux on Mimosa's side; the Pointers
+// lie along the band beyond Mimosa (here on the right). The Cross is the brightest figure; Orion, drawn southern-hemisphere way up (feet on top), is over
 // Lion's Head. Everything stays below row ~10: the hero fades the top rows out under the top bar.
-const MW = { x: 24, y: 18, dx: 1, dy: -0.3 }; // a point on its spine and its direction
+const MW = { x: 24, y: 11, dx: 1, dy: -0.3, coal: [26, 9, 6] }; // a point on its spine (Acrux), its direction, the Coalsack
 const STARS = {
-    crux: [[24, 11, 1, "#ffd8b0"], [25, 22, 1.2, "#d8e4ff"], [19, 15.5, 1, "#d8e4ff"], [30, 15, 0.85, "#e8eeff"], [28, 19, 0.55, "#ffe8d0"]],
-    pointers: [[8, 24, 1.2, "#fff0d8"], [13, 21.5, 1.05, "#d8e4ff"]],
-    orion: [[93, 25, 1.15, "#ffb070"], [106, 24, 0.95, "#d8e4ff"], [96, 18.5, 0.9, "#e0e8ff"], [99.5, 17.8, 0.9, "#e0e8ff"],
-        [103, 17.1, 0.9, "#e0e8ff"], [94, 11, 0.85, "#e0e8ff"], [107, 10.5, 1.15, "#c8d8ff"], [99.5, 13.5, 0.5, "#e0e8ff"]],
+    // white, not the Milky Way's blue, and bright enough to shine through thin cloud
+    crux: [[25, 22, 1.8, "#ffc890"], [24, 11, 2, "#ffffff"], [30, 17.5, 1.8, "#ffffff"], [19, 18, 1.7, "#ffffff"], [21, 14, 0.9, "#fff4e0"]],
+    pointers: [[41, 9, 1.1, "#fff0d8"], [36, 11.5, 0.95, "#d8e4ff"]],
+    orion: [[93, 25, 0.75, "#ffb070"], [106, 24, 0.6, "#d8e4ff"], [96, 18.5, 0.6, "#e0e8ff"], [99.5, 17.8, 0.6, "#e0e8ff"],
+        [103, 17.1, 0.6, "#e0e8ff"], [94, 11, 0.55, "#e0e8ff"], [107, 10.5, 0.75, "#c8d8ff"], [99.5, 13.5, 0.35, "#e0e8ff"]],
 };
 // pairs of star indices joined by faint lines
 const LINES = {
@@ -156,17 +196,18 @@ const KITES = [[1, 0.18, 0.15], [0.15, 0.4, 1], [1, 0.85, 0.1], [0.35, 1, 0.3]];
 
 export default scene(meta, (day) => {
     const mountain = landform(mountainBox);
-    const night = nightSky({ milkyWay: { ...MW, x: MW.x + PAD, y: MW.y + SKY }, stars: shift(STARS), lines: LINES });
+    const night = nightSky({ milkyWay: { ...MW, x: MW.x + PAD, y: MW.y + SKY, coal: [MW.coal[0] + PAD, MW.coal[1] + SKY, MW.coal[2]] }, stars: shift(STARS), lines: LINES, crowd: 0.3 });
     return { // layers back to front: sky, then land and sea, then the actors painted over everything
         horizon: HORIZON,
         light: timeline(SUNSETS[Math.floor(hash(day, 1) * SUNSETS.length)]),
-        curves: { wind: WIND, cloth: CLOTH, surf: SURF, fire: FIRE },
+        curves: { wind: WIND, cloth: CLOTH, surf: SURF, fire: FIRE, side: SIDE, clouds: CLOUDS, milky: MILKY },
         bodies: { sun: SUN, moon: MOON },
+        turn: { hour: 20.5, shift: 5 },
         layers: [
-            sky({ bandX: 145 + PAD }),
+            sky({ bandX: [-25 + PAD, 165 + PAD] }), // the glow before sunrise on the left, after sunset on the right
             mountain.glow,
             night.glow,
-            celestial({ starsFrom: 12 + SKY }),
+            celestial({ starsFrom: 12 + SKY, stars: 0.45, duskStars: 1.1, moonHigh: [1, 0.9, 0.55] }), // bright through the dusk; faint at night: the Cross stands out
             rays({ sun: SUN }),
             streaks({ from: SKY + 2, to: HORIZON - 22 }),
             clouds({ cover: 0.55 + (hash(day, 2) - 0.5) * 0.08, shift: hash(day, 3) * 200, top: SKY }),
@@ -179,7 +220,7 @@ export default scene(meta, (day) => {
             gulls({ row: 7 + SKY }),
             flock({ hours: [19.1, 20.6], row: HORIZON - 5 }), // cormorants flying home over the bay
             plane({ hours: [18.8, 20.4], row: SKY + 6 }),
-            eveningStar({ x: 132 + PAD, y: HORIZON - 26, hours: [19.6, 21.3] }), // Venus over where the sun went down
+            eveningStar({ x: 160 + PAD, y: HORIZON - 26, hours: [19.6, 21.3] }), // Venus over where the sun went down
             shootingStar({ x: [20 + PAD, 100], y: [2 + SKY, 8] }),
         ],
     };

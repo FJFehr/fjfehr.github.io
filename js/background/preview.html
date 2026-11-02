@@ -55,7 +55,7 @@ for (let m = 0; m < MOODS.length; m++) {
 $("mood").value = String(st.seed);
 if ($("mood").value !== String(st.seed)) $("mood").add(new Option(`day ${st.seed}`, st.seed, true, true));
 
-for (const [label, h] of [["Golden", 18.3], ["Sun down", 19.35], ["Rays", 19.5], ["Peak", 19.8], ["Afterglow", 20.1], ["Dusk", 20.5]]) {
+for (const [label, h] of [["Golden", 17.3], ["Ember", 18.4], ["Sunset", 19.25], ["Peak", 19.8], ["Afterglow", 20.1], ["Dusk", 20.5]]) {
     const b = document.createElement("button");
     b.textContent = label;
     b.onclick = () => setHour(h);

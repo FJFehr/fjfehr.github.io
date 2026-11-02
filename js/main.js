@@ -40,29 +40,27 @@
      * ===================================================================
      */
 
-    // Cache for the loaded YAML config
-    let siteConfig = null;
+    // The config's request (and so its result), shared by every part of the page that asks
+    let configLoad = null;
 
     /**
      * Load and parse the YAML configuration file
      * @returns {Promise<object>} Parsed configuration object
      */
     async function loadConfig() {
-        if (siteConfig) {
-            return siteConfig;
-        }
-        
-        try {
-            // Determine the correct path based on current location
-            const configPath = window.BLOG_POST_ID ? '../content/site/config.yaml' : 'content/site/config.yaml';
-            const response = await fetch(configPath);
-            const yamlText = await response.text();
-            siteConfig = jsyaml.load(yamlText);
-            return siteConfig;
-        } catch (error) {
-            console.error('Error loading config:', error);
-            return null;
-        }
+        // the request itself is kept, so the parts of the page that ask at once share one download
+        configLoad ??= (async () => {
+            try {
+                // Determine the correct path based on current location
+                const configPath = window.BLOG_POST_ID ? '../content/site/config.yaml' : 'content/site/config.yaml';
+                const response = await fetch(configPath);
+                return jsyaml.load(await response.text());
+            } catch (error) {
+                console.error('Error loading config:', error);
+                return null;
+            }
+        })();
+        return configLoad;
     }
 
     /**
@@ -221,9 +219,10 @@ function initializeThemeToggle() {
     
     if (!themeToggle) return;
     
-    // Check for saved theme preference or system preference
-    const savedTheme = localStorage.getItem('theme') || 
-                      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    // Check for saved theme preference or system preference (storage can be blocked: then it is not remembered)
+    let saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (_) { /* storage blocked */ }
+    const savedTheme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     
     // Apply saved theme
     if (savedTheme === 'dark') {
@@ -240,7 +239,7 @@ function initializeThemeToggle() {
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
         htmlElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        try { localStorage.setItem('theme', newTheme); } catch (_) { /* storage blocked */ }
         themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
         themeToggle.blur();
     });
@@ -892,13 +891,26 @@ async function initHeroBackground() {
     // The brand colour follows the scene's light (bg.accents: [from hour, light-theme colour, dark-theme colour]);
     // !important beats the config palette, which is set inline on <html> whenever it loads
     const accentStyle = document.head.appendChild(document.createElement('style'));
+    // the accent at any hour, blended between bg.accents' hours (i: 1 light theme, 2 dark): links and the footer slider
+    const accentAt = (h, i) => {
+        const A = bg.accents || [];
+        if (!A.length) return '';
+        let j = A.length - 1;
+        while (j > 0 && A[j][0] > h) j--;
+        const before = A[j][0] > h; // earlier than the first hour: blend from the last hour (the day before) to the first
+        const [h0, ...c0] = before ? A[A.length - 1] : A[j], [h1, ...c1] = before ? A[0] : A[(j + 1) % A.length];
+        const span = (h1 - h0 + 24) % 24 || 24, t = ((h - h0 + 24) % 24) / span;
+        const rgb = (s) => [1, 3, 5].map((k) => parseInt(s.slice(k, k + 2), 16));
+        const a = rgb(c0[i - 1]), b = rgb(c1[i - 1]);
+        return `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * t)).join(',')})`;
+    };
     const setAccent = () => {
-        const a = (bg.accents || []).filter(([from]) => from <= sceneHour).pop();
-        accentStyle.textContent = a ? `html.has-hero-bg {
-            --palette-light-link: ${a[1]} !important;
-            --palette-light-hover: color-mix(in srgb, ${a[1]} 10%, var(--bg-color)) !important;
-            --palette-dark-link: ${a[2]} !important;
-            --palette-dark-hover: color-mix(in srgb, ${a[2]} 15%, var(--bg-color)) !important;
+        const light = accentAt(sceneHour, 1), dark = accentAt(sceneHour, 2);
+        accentStyle.textContent = light ? `html.has-hero-bg {
+            --palette-light-link: ${light} !important;
+            --palette-light-hover: color-mix(in srgb, ${light} 10%, var(--bg-color)) !important;
+            --palette-dark-link: ${dark} !important;
+            --palette-dark-hover: color-mix(in srgb, ${dark} 15%, var(--bg-color)) !important;
         }` : '';
     };
     setAccent();
@@ -944,7 +956,8 @@ async function initHeroBackground() {
 
     // The footer echoes the scene: its horizon band (bg.footer_band: first row, row count), copied from the hero's
     // canvas while the footer is on screen, a caption for the hour (bg.captions: [from hour, text], in order), and a
-    // row of presets with the scene's now (bg.presets: [label, hour]); each load starts at the scene's now
+    // time slider in 15-minute steps with a dot for now: dragging shows a still of each time in the band, letting go
+    // takes the header there; each load starts at the scene's now
     const footerScene = () => {
         const footer = document.querySelector('footer');
         if (!footer) return;
@@ -964,10 +977,9 @@ async function initHeroBackground() {
         const time = document.createElement('div');
         time.className = 'scene-time';
         time.innerHTML = `
-            <div class="scene-time-presets" role="group" aria-label="Time of day${bg.place ? ' in ' + bg.place : ''}">
-                <button type="button" data-hour="now">Now<small></small></button>
-                ${(bg.presets || []).map(([label, h]) => `<button type="button" data-hour="${h}">${label}<small>${fmt(h)}</small></button>`).join('')}
-            </div>`;
+            <input type="range" min="0" max="23.75" step="0.25" aria-label="Time of day${bg.place ? ' in ' + bg.place : ''}">
+            <button type="button" class="scene-time-now">Now</button>`;
+        const slider = time.querySelector('input'), nowButton = time.querySelector('button');
         // an optional line above the scene (bg.footer_note; **bold** and *italic* work)
         if (bg.footer_note) {
             const note = document.createElement('p');
@@ -977,33 +989,99 @@ async function initHeroBackground() {
         }
         wrap.after(caption, time);
         let live = !(hourParam >= 0 && hourParam < 24);
-        const show = () => {
-            time.querySelector('[data-hour="now"] small').textContent = fmt(clockHour());
-            const c = (bg.captions || []).filter(([from]) => from <= sceneHour).pop();
-            caption.textContent = c ? c[1] : '';
-            time.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed',
-                String(b.dataset.hour === 'now' ? live : !live && Number(b.dataset.hour) === sceneHour)));
+        const show = (hour = sceneHour) => {
+            const c = (bg.captions || []).filter(([from]) => from <= hour).pop();
+            caption.textContent = `${fmt(hour)}${c ? ' · ' + c[1] : ''}`;
+            slider.setAttribute('aria-valuetext', fmt(hour));
+            slider.style.setProperty('--slider-light', accentAt(hour, 1)); // the slider takes the scene's colour
+            slider.style.setProperty('--slider-dark', accentAt(hour, 2));
+            // the now dot under the track, where the thumb's centre would be (the thumb is 16px wide)
+            nowButton.style.left = `calc(8px + (100% - 16px) * ${Math.min(1, clockHour() / 23.75)})`;
+            nowButton.setAttribute('aria-pressed', String(live));
         };
-        time.querySelector('.scene-time-presets').addEventListener('click', (e) => {
-            const b = e.target.closest('button');
-            if (!b) return;
-            live = b.dataset.hour === 'now';
-            setHour(live ? clockHour() : Number(b.dataset.hour));
+        const [bandTop, bandRows] = bg.footer_band || [44, 42];
+
+        // The still: the scene drawn at the slider's hour into the band, as ascii.rest draws it (each cell's character
+        // in the palette on the ground), shown from the first drag until the header has caught up after letting go
+        let still = null, loading = null, want = null, busy = false, stillShown = 0;
+        // one scene from midnight, an hour a second: its frame at t is the scene at hour t
+        const load = () => loading ??= import(new URL(`js/background/${bg.scene}.js`, document.baseURI).href)
+            .then((mod) => { still = { meta: mod.meta, frame: mod.default({ hour: 0, rate: 1 }), color: new Uint8Array(cols * rows) }; });
+        const paintStill = (text, color, meta) => {
+            const lines = text.split('\n');
+            const w = Math.round(out.clientWidth * devicePixelRatio), cw = w / cols, hgt = Math.round(cw * bandRows);
+            if (out.width !== w || out.height !== hgt) (out.width = w), (out.height = hgt);
+            const ctx = out.getContext('2d');
+            ctx.fillStyle = meta.ground;
+            ctx.fillRect(0, 0, w, hgt);
+            ctx.font = `${cw / 0.6}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            for (let r = bandTop; r < bandTop + bandRows; r++) {
+                for (let x = 0; x < cols; x++) {
+                    const ch = lines[r][x];
+                    if (ch === ' ') continue;
+                    ctx.fillStyle = meta.palette[color[r * cols + x]] || meta.palette[0];
+                    ctx.fillText(ch, (x + 0.5) * cw, (r - bandTop + 0.5) * cw);
+                }
+            }
+        };
+        const preview = async (h) => {
+            want = h, stillShown = Infinity;
+            if (busy) return;
+            busy = true;
+            try {
+                await load();
+                while (want !== null) {
+                    const hh = want;
+                    want = null;
+                    await new Promise(requestAnimationFrame);
+                    still.frame(hh, { color: still.color }); // a slow device skips every other frame: ask twice
+                    paintStill(still.frame(hh, { color: still.color }), still.color, still.meta);
+                }
+            } finally {
+                busy = false;
+            }
+        };
+        slider.value = sceneHour;
+        slider.addEventListener('input', () => { preview(Number(slider.value)); show(Number(slider.value)); });
+        // load the still's scene as soon as the slider is touched, so the first drag does not wait for it
+        slider.addEventListener('pointerdown', load, { once: true });
+        slider.addEventListener('focus', load, { once: true });
+        let pickedAt = Date.now(); // when a time was picked (or the page opened at one): the header plays on from it
+        slider.addEventListener('change', () => {
+            live = false, (pickedAt = Date.now());
+            setHour(Number(slider.value));
+            stillShown = performance.now(); // the header restarts: keep the still a moment, then echo it again
             show();
         });
+        nowButton.addEventListener('click', () => {
+            live = true;
+            setHour(clockHour());
+            slider.value = sceneHour;
+            stillShown = 0;
+            show();
+        });
+        setInterval(() => { // the now dot moves with the clock; the thumb and caption follow the header as it plays
+            const h = live ? clockHour() : (sceneHour + (Date.now() - pickedAt) / 3.6e6) % 24;
+            slider.value = h;
+            show(h);
+        }, 60000);
         show();
-        const [bandTop, bandRows] = bg.footer_band || [44, 42];
         let visible = false, last = 0;
         const copy = (t = 0) => {
             if (!visible) return;
             requestAnimationFrame(copy);
+            if (performance.now() - stillShown < 700) return;
             const src = layer.querySelector('canvas');
-            if (t - last < 1000 / (fps || 1) || !src || !src.width || !root.classList.contains('has-hero-bg')) return;
+            if (t - last < (heroOn ? 1000 / (fps || 1) : 1000) || !src || !src.width || !root.classList.contains('has-hero-bg')) return;
             last = t;
             const w = Math.round(out.clientWidth * devicePixelRatio), hgt = Math.round((w * bandRows) / cols);
             if (out.width !== w || out.height !== hgt) (out.width = w), (out.height = hgt);
             out.getContext('2d').drawImage(src, 0, (src.height * bandTop) / rows, src.width, (src.height * bandRows) / rows, 0, 0, w, hgt);
         };
+        let heroOn = true; // ascii.rest pauses the header off-screen; its picture then only needs copying now and then
+        new IntersectionObserver(([entry]) => { heroOn = entry.isIntersecting; }).observe(layer);
         new IntersectionObserver(([entry]) => {
             const was = visible;
             visible = entry.isIntersecting;
@@ -1270,7 +1348,8 @@ async function initSunLike(postId) {
     initPostHog(ph);
 
     const storageKey = `liked:${postId}`;
-    const alreadyLiked = localStorage.getItem(storageKey) === '1';
+    let alreadyLiked = false;
+    try { alreadyLiked = localStorage.getItem(storageKey) === '1'; } catch (_) { /* storage blocked: like without remembering */ }
 
     // Fetch baseline count (as of the last daily bake)
     try {
@@ -1291,7 +1370,7 @@ async function initSunLike(postId) {
         if (btn.disabled) return;
         btn.disabled = true;
         btn.classList.add('liked');
-        localStorage.setItem(storageKey, '1');
+        try { localStorage.setItem(storageKey, '1'); } catch (_) { /* storage blocked */ }
 
         // Optimistic increment — the real baseline catches up on the next
         // daily bake from PostHog, this is just immediate feedback.

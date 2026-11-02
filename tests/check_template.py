@@ -62,6 +62,15 @@ def main():
         if shutil.which("node"):
             js = f"const m = await import({str(bg / 'example.js')!r}); m.default({{ hour: 19.3, seed: 1 }})(0);"
             subprocess.run(["node", "--input-type=module", "-e", js], check=True)
+            # the accent blends between its hours, wrapping round midnight when the first hour is after it: at 03:00,
+            # 9 of the 12 hours from orange (18:00) to blue (06:00)
+            src = (ROOT / "js" / "main.js").read_text(encoding="utf-8")
+            accent = re.search(r"    const accentAt = \(h, i\) => \{.*?\n    \};", src, re.DOTALL).group(0)
+            js = ("const bg = { accents: [[6, '#0000ff'], [12, '#ffff00'], [18, '#ff8000']] };" + accent +
+                  "process.stdout.write([accentAt(3, 1), accentAt(9, 1), accentAt(20, 1)].join(' '));")
+            got = subprocess.run(["node", "-e", js], check=True, capture_output=True, text=True).stdout
+            if got != "rgb(64,32,191) rgb(128,128,128) rgb(213,107,43)":
+                fail(f"accent blend wrong: {got}")
 
         # the converter escapes a title in meta tags and a "</script>" in the embedded post
         post = site / "blogs" / "posts" / "check.md"

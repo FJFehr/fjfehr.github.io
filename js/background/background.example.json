@@ -1,5 +1,5 @@
 {
-  "_about": "Copy this file to background.json to turn on a living ASCII scene behind the home page header and profile (js/main.js, HERO BACKGROUND). scene: the module in this folder (example.js; copy it to make your own, preview with preview.html?scene=NAME). themes: the themes it shows in. timezone: the scene's clock as an IANA name (e.g. \"Europe/Zurich\"); leave out for each visitor's own. place: named in the time buttons' label. fps/fps_small: frame rates on big and small screens. grid: the scene's [cols, rows], as in its meta. focus_column/focus_row: the scene cell put at the profile photo's centre. zoom: below 1 zooms out. photo_row (and photo_row_wide above 720px): hang the scene from the top bar and start the profile at this scene row; leave out to centre the photo on the focus cell. footer_band: [first row, rows] of the scene echoed in the footer. footer_note: optional line above it (**bold**, *italic*). captions: [from hour, text], in order. presets: [label, hour] time buttons. accents: [from hour, light-theme link colour, dark-theme link colour], optional: the site colour following the scene (check contrast).",
+  "_about": "Copy this file to background.json to turn on a living ASCII scene behind the home page header and profile (js/main.js, HERO BACKGROUND). scene: the module in this folder (example.js; copy it to make your own, preview with preview.html?scene=NAME). themes: the themes it shows in. timezone: the scene's clock as an IANA name (e.g. \"Europe/Zurich\"); leave out for each visitor's own. place: named in the time slider's label. fps/fps_small: frame rates on big and small screens. grid: the scene's [cols, rows], as in its meta. focus_column/focus_row: the scene cell put at the profile photo's centre. zoom: below 1 zooms out. photo_row (and photo_row_wide above 720px): hang the scene from the top bar and start the profile at this scene row; leave out to centre the photo on the focus cell. footer_band: [first row, rows] of the scene echoed in the footer. footer_note: optional line above it (**bold**, *italic*). captions: [from hour, text], in order. accents: [from hour, light-theme link colour, dark-theme link colour], optional: the site colour following the scene (check contrast).",
   "scene": "example",
   "themes": [
     "dark",
@@ -39,24 +39,6 @@
     [
       20.5,
       "Night over the bay."
-    ]
-  ],
-  "presets": [
-    [
-      "Morning",
-      7.5
-    ],
-    [
-      "Midday",
-      12.5
-    ],
-    [
-      "Sunset",
-      19.3
-    ],
-    [
-      "Night",
-      22
     ]
   ]
 }

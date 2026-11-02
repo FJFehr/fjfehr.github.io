@@ -73,7 +73,7 @@ def clear_personal_files():
 
     # The personal hero background: keep the engine and the starter scene, so with no background.json
     # there is no background until the user copies background.example.json
-    keep = {"engine.js", "example.js", "background.example.json", "preview.html", "LICENSE-ascii.rest"}
+    keep = {"engine.js", "example.js", "background.example.json", "preview.html", "viewer.html", "LICENSE-ascii.rest"}
     for f in (ROOT / "js" / "background").glob("*"):
         if f.is_file() and f.name not in keep:
             f.unlink()

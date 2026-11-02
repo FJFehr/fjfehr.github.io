@@ -65,6 +65,11 @@ export const blend = (a, b, k) => {
     for (const key in a) o[key] = Array.isArray(a[key]) ? a[key].map((v, i) => mix(v, b[key][i], k)) : mix(a[key], b[key], k);
     return o;
 };
+// the drifting sky (f.turn): where a sky cell's light comes from (unturn), and where a sky point is drawn (turnTo)
+const unturn = (T, x, y) => [T ? x - T.dx : x, y];
+const turnTo = (T, x, y) => [T ? x + T.dx : x, y];
+// peak ** 0.85 for 0..1 in 1024 steps (read with interpolation in each frame's last pass: cheaper than Math.pow)
+const POW85 = Float64Array.from({ length: 1026 }, (_, i) => Math.pow(Math.min(1, i / 1024), 0.85));
 // keys: [[hour, value], ...] in order, the value a number or a light keyframe; eased between keys
 export const at = (keys, h) => {
     for (let i = 1; i < keys.length; i++) {
@@ -79,8 +84,12 @@ export const at = (keys, h) => {
  *   horizon  the row where sky meets water
  *   light    [[hour, light keyframe], ...]: the colours of the hour (f.L)
  *   curves   { name: [[hour, amount], ...] }: amounts by hour, each as f[name]; the layers read wind (chop, racing
- *            cloud, kites), cloth (the tablecloth), surf (surfers) and fire (the sunset: clouds lit from below, rays)
+ *            cloud, kites), cloth (the tablecloth), surf (surfers), fire (the sunset: clouds lit from below, rays) and
+ *            clouds (how much of the day's cloud is out, 1 when left out) and milky (how bright the Milky Way and its
+ *            crowd of stars are, 1 when left out)
  *   bodies   { sun, moon: { hours: [rise, set], x: [from, to], height } }: arcs over the horizon (f.sun, f.moon)
+ *   turn     optional { hour, shift }: the night sky drifting shift columns an hour to the right, drawn as built at
+ *            hour (f.turn; the night layers and the field stars follow)
  *   layers   back to front
  * Options: hour (0..24, the visitor's local time when null), rate (hours per animation second), seed (the day number
  * when null).
@@ -141,10 +150,16 @@ export function scene(meta, build) {
             for (const name in s.curves) f[name] = at(s.curves[name], h);
             f.sun = s.bodies.sun ? arc(s.bodies.sun, h) : null;
             f.moon = s.bodies.moon ? arc(s.bodies.moon, h) : null;
-            f.disc = f.sun || f.moon || [-99, -99];
-            f.lunar = !f.sun && !!f.moon;
+            // the sun's disc once it is up; at dawn the moon keeps the sky until the sun clears the horizon
+            const sunUp = f.sun && (h > 12 || f.sun[1] < horizon - 3);
+            f.disc = (sunUp ? f.sun : f.moon || f.sun) || [-99, -99];
+            f.lunar = !!f.moon && f.disc === f.moon;
             f.discUp = smooth(horizon + 4, horizon - 8, f.disc[1]);
             f.night = smooth(0.5, 0.95, f.L.star);
+            if (s.turn) {
+                const { hour, shift = 0 } = s.turn;
+                f.turn = { dx: (((((h - hour) % 24) + 36) % 24) - 12) * shift };
+            }
             f.floor.fill(0.3), f.fade.fill(1), f.cut.fill(0), oA.fill(0);
             for (const l of s.layers) l.frame?.(f);
             for (const l of s.layers) l.draw?.(f);
@@ -160,7 +175,9 @@ export function scene(meta, build) {
                         if (oR[k] + oG[k] + oB[k] < 0.5) fl = 0; // a dark figure: a small dot against the bright
                     }
                     const peak = Math.max(cr, cg, cbl, 1e-4);
-                    let level = clamp(fl + (1 - fl) * Math.pow(peak, 0.85) * 0.95) * fade[k];
+                    const pi = peak * 1024, p0 = pi | 0;
+                    const lift = peak < 1 ? POW85[p0] + (POW85[p0 + 1] - POW85[p0]) * (pi - p0) : Math.pow(peak, 0.85);
+                    let level = clamp(fl + (1 - fl) * lift * 0.95) * fade[k];
                     // at night the empty sky stays black: only cells brighter than a threshold get a dot
                     if (cut[k] > 0) level = clamp((level - cut[k]) / (1 - cut[k]));
                     const step = Math.max(0, Math.min(3, Math.round(level * 3 + BAYER[(r & 3) * 4 + (x & 3)])));
@@ -191,7 +208,8 @@ export function scene(meta, build) {
 
 // --- sky layers ---------------------------------------------------------------------------------------------------------
 // the sky: zenith to horizon (through L.mid, by L.midAmt, if the light has one), a glow band low down (strongest
-// toward the sun, else at bandX), a halo round the disc
+// toward the sun, else at bandX: a column, or [dawn, dusk] columns for before and after noon), a halo round the disc.
+// By f.side (a curve, 0..1): the sky lopsided, its colour climbing high on the sun's side and the far side still dark.
 export function sky({ bandX }) {
     let haze;
     return {
@@ -201,22 +219,26 @@ export function sky({ bandX }) {
         },
         draw(f) {
             const { W, horizon, region, L, disc, discUp, sun, R, G, B } = f;
+            const bx = sun ? sun[0] : Array.isArray(bandX) ? bandX[f.h < 12 ? 0 : 1] : bandX, side = f.side ?? 0;
             f.halo ??= new Float64Array(f.N);
             const cut = f.night > 0 ? 0.17 * f.night : 0;
             for (let r = 0; r < horizon; r++) {
+                // what depends only on the row, once per row
+                const y = r + 0.5, v = y / horizon, g = Math.pow(v, 2.4), low6 = Math.exp(-(horizon - y) / 6), low20 = Math.exp(-(horizon - y) / 20);
+                const midRow = L.midAmt > 0 ? L.midAmt * Math.exp(-(((v - 0.66) / 0.2) ** 2)) : 0;
                 for (let x = 0; x < W; x++) {
                     const k = r * W + x;
                     if (region[k] !== SKY) continue;
-                    const y = r + 0.5, dmx = x + 0.5 - disc[0], dmy = y - disc[1], dm = Math.sqrt(dmx * dmx + dmy * dmy);
-                    const v = y / horizon, g = Math.pow(v, 2.4);
+                    const dmx = x + 0.5 - disc[0], dmy = y - disc[1], dm = Math.sqrt(dmx * dmx + dmy * dmy);
                     const veil = 0.85 + 0.3 * haze[k];
                     const halo = (f.halo[k] = (Math.exp(-dm / 24) * 0.35 + Math.exp(-dm / 9) * 0.45) * discUp);
-                    const band = L.bandAmt * Math.exp(-(horizon - y) / 6) * (0.35 + 0.65 * Math.exp(-Math.abs(x - (sun ? sun[0] : bandX)) / 60));
-                    R[k] = mix(L.zen[0], L.hor[0], g) * veil + L.halo[0] * halo + L.band[0] * band;
-                    G[k] = mix(L.zen[1], L.hor[1], g) * veil + L.halo[1] * halo + L.band[1] * band;
-                    B[k] = mix(L.zen[2], L.hor[2], g) * veil + L.halo[2] * halo + L.band[2] * band;
-                    if (L.midAmt > 0) { // a band of colour two thirds of the way down (magenta at sunset)
-                        const m = L.midAmt * Math.exp(-(((v - 0.66) / 0.2) ** 2)) * veil;
+                    const toward = Math.exp(-Math.abs(x - bx) / 90), dark = 1 - 0.5 * side * (1 - toward);
+                    const band = L.bandAmt * (low6 * (0.35 + 0.65 * Math.exp(-Math.abs(x - bx) / 60)) + side * 0.9 * toward * low20) * dark;
+                    R[k] = mix(L.zen[0], L.hor[0], g) * veil * dark + L.halo[0] * halo + L.band[0] * band;
+                    G[k] = mix(L.zen[1], L.hor[1], g) * veil * dark + L.halo[1] * halo + L.band[1] * band;
+                    B[k] = mix(L.zen[2], L.hor[2], g) * veil * dark + L.halo[2] * halo + L.band[2] * band;
+                    if (midRow > 0) { // a band of colour two thirds of the way down (magenta at sunset)
+                        const m = midRow * veil;
                         R[k] = mix(R[k], L.mid[0], m), G[k] = mix(G[k], L.mid[1], m), B[k] = mix(B[k], L.mid[2], m);
                     }
                     f.floor[k] = L.skyFloor;
@@ -227,9 +249,11 @@ export function sky({ bandX }) {
     };
 }
 
-// the sun or moon's disc (the moon a crescent), and scattered stars where the sky is clear, from row starsFrom down.
-// The sun flattens and reddens as it sinks into the sea; on some days its last sliver flashes green.
-export function celestial({ radius = 6, starsFrom }) {
+// the sun or moon's disc (the moon a crescent), and scattered stars where the sky is clear, from row starsFrom down
+// (stars: their brightness; duskStars, if given: their brightness before the night is full, so they show through the
+// colour of the dusk; moonHigh, if given: the moon's colour high in the sky, whitening as it sinks). The sun flattens
+// and reddens as it sinks into the sea; on some days its last sliver flashes green.
+export function celestial({ radius = 6, starsFrom, stars = 0.8, duskStars = stars, moonHigh = null }) {
     const RED = [1, 0.42, 0.2], GREEN = [0.45, 1, 0.55];
     return {
         draw(f) {
@@ -237,7 +261,10 @@ export function celestial({ radius = 6, starsFrom }) {
             const low = lunar ? 0 : smooth(horizon - 8, horizon + 3, f.disc[1]) * smooth(0, 0.5, f.fire ?? 0); // 0 high up, 1 sinking into the sea
             const disc = [f.disc[0], f.disc[1]], squash = 1 + 0.7 * low; // rows count for more: an oval
             const flash = !lunar && f.disc[1] > horizon + 3.3 && hash(f.day, 21) > 0.5;
-            const dc = flash ? GREEN : L.disc.map((v, i) => mix(v, RED[i], low));
+            const high = lunar && moonHigh ? smooth(horizon - 6, horizon - 30, f.disc[1]) : 0;
+            const dc = flash ? GREEN : L.disc.map((v, i) => mix(mix(v, RED[i], low), moonHigh ? moonHigh[i] : v, high));
+            // a field star's cell in the unturned sky, so the stars turn with the night sky (f.turn)
+            const turned = (x, r) => { const [sx, sr] = unturn(f.turn, x, r); return [Math.round(sx), Math.round(sr) * 3 + 11]; };
             for (let r = 0; r < horizon; r++) {
                 for (let x = 0; x < W; x++) {
                     const k = r * W + x;
@@ -250,10 +277,12 @@ export function celestial({ radius = 6, starsFrom }) {
                         const a = (1 - c * 0.8) * smooth(radius, radius - 1, dm);
                         R[k] = mix(R[k], dc[0] * face, a), G[k] = mix(G[k], dc[1] * face, a), B[k] = mix(B[k], dc[2] * face, a);
                     }
-                    else if (L.star > 0 && c < 0.05 && hash(x, r * 3 + 11) > 0.985) {
-                        const tw = 0.6 + 0.4 * Math.sin(t * (1.5 + hash(x, r) * 3) + hash(r, x) * 6.28);
-                        const s = (0.5 + 0.5 * tw) * (1 - halo[k]) * smooth(horizon, starsFrom, y) * L.star * 0.8;
-                        R[k] = Math.max(R[k], s * 0.92), G[k] = Math.max(G[k], s * 0.94), B[k] = Math.max(B[k], s);
+                    else if (L.star > 0 && c < 0.05 + 0.2 * (1 - f.night) && hash(...turned(x, r)) > 0.985) {
+                        const [sx, sr] = turned(x, r), tw = 0.6 + 0.4 * Math.sin(t * (1.5 + hash(sx, sr) * 3) + hash(sr, sx) * 6.28);
+                        const s = (0.5 + 0.5 * tw) * (1 - halo[k]) * smooth(horizon, starsFrom, y) * L.star * mix(duskStars, stars, f.night);
+                        // at dusk a star adds its light to the coloured sky (and shows through thin cloud), so it reads
+                        const add = 0.5 * s * (1 - f.night);
+                        R[k] = Math.max(R[k], s * 0.92) + add, G[k] = Math.max(G[k], s * 0.94) + add, B[k] = Math.max(B[k], s) + add;
                     }
                 }
             }
@@ -293,6 +322,7 @@ export function clouds({ cover: cloudiness, shift, top, period = 640 }) {
             f.cover ??= new Float64Array(N);
             f.cloudLit ??= new Float64Array(N);
             const drift = t * (1.4 + wind * 7); // the clouds race in the wind
+            const clearNight = (1 - 0.6 * f.night) * (f.clouds ?? 1); // thinner at night, so the stars show
             for (let r = 0; r < horizon; r++) {
                 for (let x = 0; x < W; x++) {
                     const k = r * W + x;
@@ -300,7 +330,7 @@ export function clouds({ cover: cloudiness, shift, top, period = 640 }) {
                     const y = r + 0.5, dmx = x + 0.5 - disc[0], dmy = y - disc[1], dm = Math.sqrt(dmx * dmx + dmy * dmy);
                     const sx = x + drift, ix = Math.floor(sx), fxx = sx - ix;
                     const i0 = r * CW + (ix % CW), i1 = r * CW + ((ix + 1) % CW);
-                    f.cover[k] = (cover[i0] + (cover[i1] - cover[i0]) * fxx) * (0.15 + 0.85 * smooth(7, 24, dm)) * (0.75 + 0.35 * wind + 0.3 * fire);
+                    f.cover[k] = (cover[i0] + (cover[i1] - cover[i0]) * fxx) * (0.15 + 0.85 * smooth(7, 24, dm)) * (0.75 + 0.35 * wind + 0.3 * fire) * clearNight;
                     f.cloudLit[k] = lit[i0] + (lit[i1] - lit[i0]) * fxx;
                     if (fire > 0) f.cloudLit[k] = mix(f.cloudLit[k], under[i0] + (under[i1] - under[i0]) * fxx, fire);
                 }
@@ -392,45 +422,59 @@ export function streaks({ from, to, period = 640 }) {
 /*
  * The night sky: the Milky Way and constellations. Two layers: glow (the Milky Way's light, behind the clouds) and
  * stars (the constellations, the faint lines joining them and the Milky Way's crowd of stars, over thin cloud).
- * milkyWay: { x, y, dx, dy }, a point on its spine and its direction; stars: { name: [[x, y, magnitude, tint], ...] };
- * lines: { name: [[star index, star index], ...] }. All in grid cells.
+ * milkyWay: { x, y, dx, dy, coal }, a point on its spine and its direction, and optionally a dark nebula coal: [x, y,
+ * radius] (the Coalsack, so the Southern Cross stands out against it); stars: { name: [[x, y, magnitude, tint], ...] };
+ * lines: { name: [[star index, star index], ...] }, each as bright as its two stars; crowd: the brightness of the
+ * Milky Way's faint stars. All in grid cells.
  */
-export function nightSky({ milkyWay: MW, stars: STARS, lines: LINES }) {
-    let milky, milkyStar, cStar, cLine, cTint;
-    const glow = {
-        build({ W, N, horizon }) {
+export function nightSky({ milkyWay: MW, stars: STARS, lines: LINES, crowd = 0.55 }) {
+    let milky, milkyStar, cStar, cLine, cTint, baked = null;
+    // the sky as turned by f.turn (worked out again only once it has turned a little further)
+    const bake = ({ W, N, horizon, turn: T }) => {
+            baked = T ? T.dx : 0;
             milky = new Float32Array(N), milkyStar = new Float32Array(N);
             // distance from its spine, clumped glow, a dark rift down the middle, and a crowd of faint stars
             const len = Math.hypot(MW.dx, MW.dy), nx = -MW.dy / len, ny = MW.dx / len;
-            for (let r = 0; r < horizon; r++) {
-                for (let x = 0; x < W; x++) {
-                    const k = r * W + x, d = (x - MW.x) * nx + (r - MW.y) * ny;
+            for (let rr = 0; rr < horizon; rr++) {
+                for (let xx = 0; xx < W; xx++) {
+                    const [x, r] = unturn(T, xx, rr), xi = Math.round(x), ri = Math.round(r);
+                    const k = rr * W + xx, d = (x - MW.x) * nx + (r - MW.y) * ny;
                     const along = (x - MW.x) * (MW.dx / len) + (r - MW.y) * (MW.dy / len);
                     const band = Math.exp(-((d / (11 + 4 * fbm(along * 0.05, 1, 2, 0))) ** 2));
                     const rift = 1 - 0.75 * Math.exp(-(((d - 1.2 * Math.sin(along * 0.08)) / 1.8) ** 2)) * smooth(-60, -20, along);
-                    milky[k] = band * (0.45 + 0.9 * fbm(x * 0.12, r * 0.2, 4, 0)) * rift;
-                    milkyStar[k] = hash(x * 11 + 5, r * 13 + 7) > 1 - 0.2 * band * rift ? 0.5 + 0.5 * hash(x, r * 5) : 0;
+                    const coal = MW.coal ? 1 - 0.9 * Math.exp(-(((x - MW.coal[0]) ** 2 + (r - MW.coal[1]) ** 2) / MW.coal[2] ** 2)) : 1;
+                    milky[k] = band * (0.45 + 0.9 * fbm(x * 0.12, r * 0.2, 4, 0)) * rift * coal;
+                    milkyStar[k] = hash(xi * 11 + 5, ri * 13 + 7) > 1 - 0.2 * band * rift * coal ? 0.5 + 0.5 * hash(xi, ri * 5) : 0;
                 }
             }
             // the constellations and their lines, as per-cell light (they twinkle per frame)
             cStar = new Float32Array(N), cLine = new Float32Array(N), cTint = new Array(N);
-            for (const [name, stars] of Object.entries(STARS)) {
+            const cell = (x, y) => { // a sky cell's index, or -1 off the sky
+                const xi = Math.round(x), yi = Math.round(y);
+                return xi >= 0 && xi < W && yi >= 0 && yi < horizon ? yi * W + xi : -1;
+            };
+            for (const [name, stars0] of Object.entries(STARS)) {
+                const stars = stars0.map(([sx, sy, ...rest]) => [...turnTo(T, sx, sy), ...rest]);
                 for (const [sx, sy, mag, tint] of stars) {
                     // a bright centre with a small cross of glow, so the figure reads among the Milky Way's crowd
                     for (const [dx, dy, f] of [[0, 0, 1], [1, 0, 0.4], [-1, 0, 0.4], [0, 1, 0.4], [0, -1, 0.4]]) {
-                        const k = (Math.round(sy) + dy) * W + Math.round(sx) + dx;
-                        if (mag * f > cStar[k]) (cStar[k] = mag * f), (cTint[k] = hex(tint));
+                        const k = cell(Math.round(sx) + dx, Math.round(sy) + dy);
+                        if (k >= 0 && mag * f > cStar[k]) (cStar[k] = mag * f), (cTint[k] = hex(tint));
                     }
                 }
                 for (const [a, b] of LINES[name] || []) {
-                    const [x0, y0] = stars[a], [x1, y1] = stars[b];
+                    const [x0, y0, m0] = stars[a], [x1, y1, m1] = stars[b];
                     const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0));
                     for (let s = 2; s < n - 1; s += 2) { // every other cell, clear of the stars themselves
-                        const k = Math.round(y0 + ((y1 - y0) * s) / n) * W + Math.round(x0 + ((x1 - x0) * s) / n);
-                        if (!cStar[k]) cLine[k] = 1;
+                        const k = cell(x0 + ((x1 - x0) * s) / n, y0 + ((y1 - y0) * s) / n);
+                        if (k >= 0 && !cStar[k]) cLine[k] = Math.max(cLine[k], (m0 + m1) / 2);
                     }
                 }
             }
+    };
+    const glow = {
+        frame(f) {
+            if (baked === null || Math.abs((f.turn ? f.turn.dx : 0) - baked) > 0.5) bake(f); // stars snap to whole cells
         },
         draw(f) {
             const { W, horizon, region, night, halo, R, G, B } = f;
@@ -439,7 +483,7 @@ export function nightSky({ milkyWay: MW, stars: STARS, lines: LINES }) {
                 for (let x = 0; x < W; x++) {
                     const k = r * W + x;
                     if (region[k] !== SKY) continue;
-                    const mwv = milky[k] * night * (1 - halo[k]) * smooth(horizon, horizon - 14, r + 0.5);
+                    const mwv = milky[k] * night * (f.milky ?? 1) * (1 - halo[k]) * smooth(horizon, horizon - 14, r + 0.5);
                     R[k] += 0.5 * mwv, G[k] += 0.52 * mwv, B[k] += 0.66 * mwv;
                 }
             }
@@ -447,25 +491,27 @@ export function nightSky({ milkyWay: MW, stars: STARS, lines: LINES }) {
     };
     const stars = {
         draw(f) {
-            const { W, horizon, region, night, t, cover, R, G, B } = f;
-            if (night <= 0.01) return;
+            const { W, horizon, region, night, t, cover, L, R, G, B } = f;
+            // the constellations' bright stars show from the dusk, before the night is full
+            const early = Math.max(night, smooth(0.15, 0.5, L.star)), mw = night * (f.milky ?? 1);
+            if (early <= 0.01) return;
             for (let r = 0; r < horizon; r++) {
                 for (let x = 0; x < W; x++) {
                     const k = r * W + x;
                     if (region[k] !== SKY) continue;
                     const clear = 1 - Math.min(1, (cover ? cover[k] : 0) * 1.3);
                     if (cStar[k]) {
-                        const s = Math.min(1, cStar[k] * night * clear * (0.85 + 0.15 * Math.sin(t * (1.5 + hash(x, r) * 2) + x)));
-                        const tn = cTint[k];
-                        R[k] = Math.max(R[k], s * tn[0]), G[k] = Math.max(G[k], s * tn[1]), B[k] = Math.max(B[k], s * tn[2]);
+                        const s = Math.min(1, cStar[k] * early * clear * (0.85 + 0.15 * Math.sin(t * (1.5 + hash(x, r) * 2) + x)));
+                        const tn = cTint[k], add = 0.4 * s * (1 - night); // at dusk adding to the coloured sky, so it reads
+                        R[k] = Math.max(R[k], s * tn[0]) + add, G[k] = Math.max(G[k], s * tn[1]) + add, B[k] = Math.max(B[k], s * tn[2]) + add;
                         f.floor[k] = 0;
                     }
                     else if (cLine[k]) {
-                        const s = 0.3 * smooth(0.75, 1, night) * clear;
+                        const s = 0.3 * cLine[k] * smooth(0.75, 1, night) * clear;
                         R[k] = Math.max(R[k], s * 0.8), G[k] = Math.max(G[k], s * 0.85), B[k] = Math.max(B[k], s);
                     }
                     else if (milkyStar[k]) {
-                        const s = milkyStar[k] * night * clear * (0.6 + 0.4 * Math.sin(t * 2 + k)) * 0.55;
+                        const s = milkyStar[k] * mw * clear * (0.6 + 0.4 * Math.sin(t * 2 + k)) * crowd;
                         R[k] = Math.max(R[k], s * 0.9), G[k] = Math.max(G[k], s * 0.92), B[k] = Math.max(B[k], s);
                     }
                 }
@@ -484,10 +530,14 @@ export function nightSky({ milkyWay: MW, stars: STARS, lines: LINES }) {
  *   front    { at, height, left, right }: a nearer peak drawn over the trace (a triangle at u = at, its slopes reaching
  *            left and right), sunlit on its left flank, shadowed on its right, with a dark seam against the trace
  *   city     u: a strip of city along the waterline from the left edge of the grid to this point, its lights coming on
+ *   climb    0..1: how far up the slopes the city climbs, as a share of the mountain's height there (thinning out);
+ *            or a function of u, the city reaching higher where it gives more
+ *   cityDensity  optional function of u (its 0..1 width; below 0 is the coast left of it): how many lights there,
+ *            0..1; they gather in clusters
  *            at dusk (f.L.lights) and glowing behind the land at night (the .glow layer, drawn into the sky)
  * Exposes .top (the skyline's row per column, once built), .features, .cityEnd and .glow.
  */
-export function landform({ profile, x: X, width: RW, height: RH, flat = [0, 0], features = {}, front = null, city = null }) {
+export function landform({ profile, x: X, width: RW, height: RH, flat = [0, 0], features = {}, front = null, city = null, climb = 0, cityDensity = null }) {
     const MOUNT = 1, CITY = 2;
     const ridge = (u) => {
         const f = clamp(u) * (profile.length - 1), i = Math.min(profile.length - 2, Math.floor(f));
@@ -495,7 +545,7 @@ export function landform({ profile, x: X, width: RW, height: RH, flat = [0, 0], 
     };
     const peak = (u) => front ? front.height * Math.max(0, 1 - Math.abs(u - front.at) / (u < front.at ? front.left : front.right)) : 0;
     const cityEnd = city == null ? -1 : X + Math.round(city * RW);
-    let kind, shade, speck, near, edge, vegN, top, frontTop;
+    let kind, shade, speck, height, near, edge, vegN, top, frontTop;
     const self = {
         features: Object.fromEntries(Object.entries(features).map(([k, [a, b]]) => [k, [X + Math.round(a * RW), X + Math.round(b * RW)]])),
         cityEnd,
@@ -508,7 +558,7 @@ export function landform({ profile, x: X, width: RW, height: RH, flat = [0, 0], 
                 top[x] = horizon - ridge(clamp(u)) * RH - (fbm(x * 0.35, 5, 3, 0) - 0.5) * (isFlat ? 0.2 : 0.4); // the trace has its own texture
                 frontTop[x] = Math.max(top[x], horizon - peak(u) * RH); // inside the outline: the outline stays the trace
             }
-            kind = new Uint8Array(N), shade = new Float32Array(N), speck = new Float32Array(N);
+            kind = new Uint8Array(N), shade = new Float32Array(N), speck = new Float32Array(N), height = new Float32Array(N);
             near = new Uint8Array(N), edge = new Uint8Array(N), vegN = new Float32Array(N);
             for (let r = 0; r < H; r++) {
                 for (let x = 0; x < W; x++) {
@@ -535,6 +585,13 @@ export function landform({ profile, x: X, width: RW, height: RH, flat = [0, 0], 
                         const cliff = t && x >= t[0] - 2 && x <= t[1] + 2 ? smooth(tp + 7, tp + 1, y) * 0.3 : 0;
                         shade[k] = clamp(0.35 + 0.55 * (gully - 0.5) * 2 * 0.5 + clamp(slope * 0.12) + cliff - 0.3 * smooth(tp + 10, horizon, y));
                     }
+                    // houses up the lower slopes, fewer the higher they go: the city in its bowl
+                    const up = (horizon - y) / Math.max(1, horizon - tp), u = (x - X) / RW;
+                    const reach = (typeof climb === "function" ? climb(u) : climb) * (0.8 + 0.4 * hash(x, 31)); // a ragged edge
+                    if (kind[k] === MOUNT && x <= cityEnd && up < reach) speck[k] = hash(x * 3 + 1, r * 7) * (1 - 0.25 * up / reach);
+                    // up the slopes: fewer lights where the density is low, gathered in clusters, dimmer the higher
+                    if (kind[k] === MOUNT && speck[k]) height[k] = up / reach;
+                    if (kind[k] === MOUNT && speck[k] && cityDensity && hash(x * 13 + 7, r * 5 + 3) > cityDensity(u) * (0.65 + 0.45 * smooth(0.35, 0.65, fbm(x * 0.15, r * 0.3, 3, 9)))) speck[k] = 0;
                     if (kind[k]) {
                         solid[k] = 1;
                         vegN[k] = fbm(x * 0.3, r * 0.45, 3, 0); // patches of scrub and rock
@@ -568,13 +625,15 @@ export function landform({ profile, x: X, width: RW, height: RH, flat = [0, 0], 
                     const air = (near[k] ? 0.04 : 0.12) * (1 - 0.6 * day);
                     cr = mix(cr, L.hor[0], air), cg = mix(cg, L.hor[1], air), cbl = mix(cbl, L.hor[2], air);
                     f.floor[k] = 0.1 * (1 - L.star); // at night no minimum dot: a dark shape against the sky
-                    if (kind[k] === CITY) {
-                        // pale buildings by day, warm lights coming on at dusk
-                        const sp = speck[k];
-                        if (sp > 0.55) {
-                            const on = L.lights * smooth(0.55, 0.75, sp) * (0.8 + 0.2 * Math.sin(t * 2 + k));
+                    if (speck[k]) {
+                        // pale buildings by day, lights coming on at dusk: at the water's edge a bright line packed
+                        // close by the perspective, yellow and white; up the slopes dimmer and smaller the higher
+                        const sp = speck[k], edge = kind[k] === CITY, th = edge ? 0.3 : 0.55;
+                        if (sp > th) {
+                            const on = L.lights * smooth(th, th + 0.2, sp) * (0.75 + 0.25 * Math.sin(t * (2 + hash(k, 3) * 3) + k)) * (edge ? 1 : 0.75 - 0.45 * height[k]);
                             const a = Math.max(on, 0.5 * (1 - L.lights));
-                            cr = mix(cr, mix(0.72, 1, on), a), cg = mix(cg, mix(0.78, 0.82, on), a), cbl = mix(cbl, mix(0.86, 0.5, on), a);
+                            const lit = hash(k, 5) > 0.5 ? [1, 0.97, 0.88] : [1, 0.84, 0.42]; // white or yellow
+                            cr = mix(cr, mix(0.72, lit[0], on), a), cg = mix(cg, mix(0.78, lit[1], on), a), cbl = mix(cbl, mix(0.86, lit[2], on), a);
                         }
                     }
                     R[k] = cr, G[k] = cg, B[k] = cbl;
@@ -647,18 +706,25 @@ export function water({ lineup = 10, breaks = [-10, 165], lightsEnd = -1 }) {
             const calm = 1 - smooth(0.05, 0.4, wind);
             const dir = hash(n, 11) > 0.5 ? 1 : -1;
             const len = 40 + hash(n, 13) * 100; // how far it peels before it fades
-            const start = dir > 0 ? hash(n, 14) * 90 + breaks[0] : breaks[1] - hash(n, 14) * 90;
+            // under the moon the wave breaks on the side of its road on the water with more room, and fades if it
+            // peels into it
+            let lo = breaks[0], hi = breaks[1];
+            if (f.lunar) f.disc[0] > (lo + hi) / 2 ? (hi = Math.min(hi, f.disc[0] - 50)) : (lo = Math.max(lo, f.disc[0] + 50));
+            const span = Math.max(0, Math.min(90, hi - lo - 40));
+            const start = dir > 0 ? lo + hash(n, 14) * span : hi - hash(n, 14) * span;
             const row = horizon + lineup;
+            const front = start + dir * ph * len;
+            const clear = f.lunar ? smooth(20, 45, Math.abs(front - f.disc[0])) : 1;
             f.wave = {
-                dir, start, row,
-                front: start + dir * ph * len,
-                on: calm * (hash(n, day + 5) > 0.2 ? 1 : 0) * smooth(0, 0.1, ph) * smooth(1, 0.7, ph),
-                y: row + Math.round((hash(n, 12) - 0.5) * 4),
+                dir, start, row, front,
+                on: calm * clear * (hash(n, day + 5) > 0.2 ? 1 : 0) * smooth(0, 0.1, ph) * smooth(1, 0.7, ph),
+                y: row + Math.round((hash(n, 12) - 0.5) * 4) + ph * 9, // rolling in toward the shore as it peels
             };
         },
         draw(f) {
-            const { W, H, horizon, region, L, t, disc, lunar, discUp, R, G, B } = f;
+            const { W, H, horizon, region, L, t, disc, lunar, discUp, night, R, G, B } = f;
             const wind = f.wind ?? 0;
+            const spark = Math.floor(t * 3); // the phosphorescence flickers
             const { on: wOn, front, dir: wDir, start: wStart, y: wY } = f.wave;
             for (let r = horizon; r < H; r++) {
                 for (let x = 0; x < W; x++) {
@@ -666,11 +732,11 @@ export function water({ lineup = 10, breaks = [-10, 165], lightsEnd = -1 }) {
                     if (region[k] !== WATER) continue;
                     const y = r + 0.5, v = (y - horizon) / (H - horizon);
                     const w = 0.6 * noise(x * 0.07 + t * 0.12, y * 0.45 - t * 0.6, 0) + 0.4 * noise(x * 0.2 - t * 0.25, y * 0.9 - t * 1.1, 0);
-                    const chop = wind * (noise(x * 0.5 - t * 1.5, y * 1.6 - t * 2.2, 0) - 0.5);
+                    const chop = wind > 0 ? wind * (noise(x * 0.5 - t * 1.5, y * 1.6 - t * 2.2, 0) - 0.5) : 0; // only in the wind
                     // before the wind: clean lines of swell rolling in toward the beach, crests catching the light
                     const calm = 1 - smooth(0, 0.5, wind);
                     const lineY = (y - horizon) * (0.9 + 0.012 * (y - horizon) ** 1.5); // closer together far away
-                    const lines = calm * (Math.pow(0.5 + 0.5 * Math.sin(lineY * 0.9 - t * 1.4 + 1.5 * noise(x * 0.04, y * 0.15, 0)), 3) - 0.3);
+                    const lines = calm > 0 ? calm * (Math.pow(0.5 + 0.5 * Math.sin(lineY * 0.9 - t * 1.4 + 1.5 * noise(x * 0.04, y * 0.15, 0)), 3) - 0.3) : 0;
                     const swell = clamp(0.5 + (0.35 + 0.5 * wind) * (w - 0.5) * 2 + chop * 0.8 + 0.55 * lines);
                     let cr = mix(L.sea[0], L.seaLight[0], swell) * (1 - 0.35 * v);
                     let cg = mix(L.sea[1], L.seaLight[1], swell) * (1 - 0.35 * v);
@@ -691,26 +757,40 @@ export function water({ lineup = 10, breaks = [-10, 165], lightsEnd = -1 }) {
                         cr += q, cg += q * 0.8, cbl += q * 0.45;
                     }
                     // whitecaps in the wind
-                    const cap = wind * smooth(0.82, 0.95, noise(x * 0.35 - t * 1.2, y * 1.2 - t * 1.6, 0)) * smooth(horizon, horizon + 6, y);
+                    const cap = wind > 0 ? wind * smooth(0.82, 0.95, noise(x * 0.35 - t * 1.2, y * 1.2 - t * 1.6, 0)) * smooth(horizon, horizon + 6, y) : 0;
                     // the breaking wave
-                    let foam = cap;
+                    let foam = cap, fresh = 0, rise = 0;
                     const dy = y - wY;
-                    if (wOn > 0 && Math.abs(dy) < 4) {
+                    if (wOn > 0 && dy > -4 && dy < 12) {
                         const ahead = (x - front) * wDir; // >0: not yet broken
                         const since = (x - wStart) * wDir; // >0: where it has already peeled
+                        // the curl: the lip at the top throws ahead and curls down, the foot below it flat (the face shows
+                        // under the lip). curl: the white's leading edge in this row.
+                        const sv = (dy + 1.5) / 2.5, curl = dy > -4 && dy < 1.2 ? (sv < 0 ? 7 * sv * sv : 0) - 1.5 : -9;
+                        fresh = smooth(curl + 1, curl - 1, ahead) * smooth(-25, -3, ahead); // just broken: white, fading behind
+                        const drop = Math.max(0, -ahead) * 0.2; // the older the white water, the nearer the shore
                         const face = wOn * smooth(40, 10, ahead) * smooth(-1, 2, ahead) * smooth(3.5, 0.5, Math.abs(dy + 1)) * (dy < 1 ? 1 : 0);
-                        if (face > 0) { // the turquoise face, lighter toward its crest
-                            const tq = [0.02, 0.5, 0.52], crest = [0.5, 0.85, 0.92];
+                        if (face > 0) { // the turquoise face, lighter toward its crest; at night a dark line of rising water
+                            const tq = [0.02, 0.5, 0.52].map((v, i) => mix(v, [0.005, 0.015, 0.04][i], night));
+                            const crest = [0.5, 0.85, 0.92].map((v, i) => mix(v, [0.02, 0.05, 0.1][i], night));
                             const kk = smooth(0, -2.5, dy) * face;
+                            rise = face * night;
                             cr = mix(cr, mix(tq[0], crest[0], kk), face), cg = mix(cg, mix(tq[1], crest[1], kk), face), cbl = mix(cbl, mix(tq[2], crest[2], kk), face);
                         }
-                        const spray = wOn * smooth(4, 0, Math.abs(ahead)) * smooth(-4.5, -1, dy) * smooth(2, 0, dy);
-                        const white = wOn * smooth(-60, -8, ahead) * smooth(3, -0.5, ahead) * smooth(-2, 4, since)
-                            * smooth(3.5, 0.5, Math.abs(dy - 0.5)) * (0.5 + 0.5 * noise(x * 0.6, y * 2 + t, 0));
-                        foam = Math.max(foam, spray, white * 0.85);
+                        const lip = curl < -5 ? 0 : wOn * smooth(curl + 1, curl - 0.5, ahead) * smooth(-12, -4, ahead);
+                        const white = wOn * smooth(-60, -8, ahead) * smooth(-0.5, -2, ahead) * smooth(-2, 4, since)
+                            * smooth(3.5 + drop * 0.4, 0.5, Math.abs(dy - 0.5 - drop)) * (0.5 + 0.5 * noise(x * 0.6, y * 2 + t, 0));
+                        foam = Math.max(foam, lip, white * 0.85);
                     }
-                    R[k] = mix(cr, L.foam[0], foam), G[k] = mix(cg, L.foam[1], foam), B[k] = mix(cbl, L.foam[2], foam);
-                    f.floor[k] = 0.18;
+                    // at night the foam glows: phosphorescence, sea green and blue with now and then a spark of bright
+                    // blue, white only where the wave has just broken
+                    let fc = L.foam;
+                    if (night > 0 && foam > 0.05) {
+                        const glow = hash(x * 7 + spark, r * 3 + spark * 5) > 0.9 ? [0.45, 0.85, 1] : hash(x, r + spark) > 0.5 ? [0.1, 0.72, 0.55] : [0.06, 0.45, 0.8];
+                        fc = fc.map((v, i) => mix(v, mix(glow[i], 0.95, 0.85 * fresh), night));
+                    }
+                    R[k] = mix(cr, fc[0], foam), G[k] = mix(cg, fc[1], foam), B[k] = mix(cbl, fc[2], foam);
+                    f.floor[k] = 0.18 * (1 - rise); // the dark line shows as the smallest dots
                     f.fade[k] = smooth(H, H - 26, y);
                 }
             }
