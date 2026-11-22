@@ -330,6 +330,49 @@ html[data-theme="dark"] .scene-time input[type="range"] {
   opacity: 1;
 }
 
+/* back up to the live scene in the header: a .pub-button at the footer's top right, on the note's line */
+.scene-up {
+  display: none;
+}
+
+html.has-hero-bg footer {
+  position: relative;
+}
+
+html.has-hero-bg .scene-up {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: var(--padding-horizontal);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* the arrow takes the scene's colour */
+.scene-up-arrow {
+  font-weight: 700;
+  color: var(--link-color);
+}
+
+/* phones: the note wraps short of the button, so both share the top line */
+@media (max-width: 720px) {
+  html.has-hero-bg .footer-scene-note {
+    padding-right: 118px;
+    text-align: left;
+  }
+}
+
+/* the scene is clickable (JS jumps to the slider); the bio, role and links over it are not */
+html.has-hero-bg .profile-section {
+  cursor: pointer;
+}
+
+html.has-hero-bg .profile-text,
+html.has-hero-bg .profile-role,
+html.has-hero-bg .profile-socials {
+  cursor: auto;
+}
+
 /* soft panels keep the bio and role readable over the scene */
 html.has-hero-bg .profile-text {
   background: color-mix(in srgb, var(--bg-color) 62%, transparent);

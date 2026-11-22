@@ -952,6 +952,20 @@ async function initHeroBackground() {
         window.addEventListener('resize', fit);
         fit();
         footerScene();
+        // clicking the scene (not the bio, photo or links over it) jumps to the footer's time slider
+        main.addEventListener('click', (e) => {
+            const r = layer.getBoundingClientRect();
+            if (!root.classList.contains('has-hero-bg') || e.clientY < r.top || e.clientY > r.bottom) return;
+            if (e.target.closest('.header, a, button, input, img, .profile-text, .profile-role, .profile-socials')) return;
+            if (String(getSelection())) return; // selecting text is not a click on the scene
+            const slider = document.querySelector('.scene-time input');
+            if (!slider) return;
+            // all the way down, so the footer's whole band and the slider show
+            const toFloor = () => document.querySelector('footer').scrollIntoView({ behavior: 'smooth', block: 'end' }); // whichever element scrolls
+            toFloor();
+            addEventListener('scrollend', toFloor, { once: true, capture: true }); // again, in case images loading on the way grew the page
+            slider.focus({ preventScroll: true });
+        });
     };
 
     // The footer echoes the scene: its horizon band (bg.footer_band: first row, row count), copied from the hero's
@@ -963,8 +977,8 @@ async function initHeroBackground() {
         if (!footer) return;
         const wrap = document.createElement('div');
         wrap.className = 'footer-scene';
-        wrap.setAttribute('aria-hidden', 'true');
         const out = document.createElement('canvas');
+        out.setAttribute('aria-hidden', 'true');
         out.width = out.height = 0;
         wrap.appendChild(out);
         footer.prepend(wrap);
@@ -987,6 +1001,13 @@ async function initHeroBackground() {
             note.innerHTML = formatInlineMarkdown(bg.footer_note);
             wrap.before(note);
         }
+        // back up to the live scene in the header, styled like the publication buttons
+        const up = document.createElement('button');
+        up.type = 'button';
+        up.className = 'pub-button scene-up';
+        up.innerHTML = 'Watch it live <span class="scene-up-arrow" aria-hidden="true">↑</span>';
+        up.addEventListener('click', () => document.getElementById('top').scrollIntoView({ behavior: 'smooth' })); // body scrolls, so html's smooth scrolling does not apply
+        footer.prepend(up);
         wrap.after(caption, time);
         let live = !(hourParam >= 0 && hourParam < 24);
         const show = (hour = sceneHour) => {
@@ -1000,6 +1021,7 @@ async function initHeroBackground() {
             nowButton.setAttribute('aria-pressed', String(live));
         };
         const [bandTop, bandRows] = bg.footer_band || [44, 42];
+        out.style.aspectRatio = `${cols} / ${bandRows}`; // its height from the start, so the page does not grow as it scrolls in
 
         // The still: the scene drawn at the slider's hour into the band, as ascii.rest draws it (each cell's character
         // in the palette on the ground), shown from the first drag until the header has caught up after letting go

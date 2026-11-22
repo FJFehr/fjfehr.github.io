@@ -7,6 +7,7 @@
   venue: "Conference on Neural Information Processing Systems"
   conference: "NeurIPS 2026 Workshop on Neural Network Artifacts as a New Data Modality (🔦 Spotlight)"
   paper: "https://arxiv.org/abs/2610.00820"
+  website: "https://fabiojfehr.com/on-the-fly/"
   code: "https://github.com/FJFehr/on-the-fly-models"
   image: "content/publications/files/on-the-fly.png"
   image_dark: "content/publications/files/on-the-fly-dark.png"
