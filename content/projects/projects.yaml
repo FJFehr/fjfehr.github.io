@@ -36,4 +36,4 @@
   title: "Debrief"
   image: "content/projects/images/debrief.png"
   url: "https://github.com/FJFehr/debrief"
-  summary: "**A peer review assistant.** You read and annotate the paper; Debrief interviews you about your notes and drafts the review from your answers. Every point comes from you: the model asks, organises and rephrases."
+  summary: "**A peer review assistant.** You read and annotate the paper. Debrief interviews you about your notes, tests them for bias and helps you draft a structured review. The thinking stays yours."
