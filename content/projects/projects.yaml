@@ -31,3 +31,9 @@
       url: "https://synthia.space/riffdle"
       image: "content/projects/images/riffdle-screenshot.jpg"
       summary: "Wordle for music: listen to the riff, play it back on the keyboard, and get clues on each note."
+
+- id: debrief
+  title: "Debrief"
+  image: "content/projects/images/debrief.png"
+  url: "https://github.com/FJFehr/debrief"
+  summary: "**A peer review assistant.** You read and annotate the paper; Debrief interviews you about your notes and drafts the review from your answers. Every point comes from you: the model asks, organises and rephrases."
